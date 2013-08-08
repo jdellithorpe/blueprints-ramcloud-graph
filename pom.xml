@@ -26,11 +26,5 @@
     	<artifactId>blueprints-core</artifactId>
     	<version>2.4.0</version>
     </dependency>
-    <dependency>
-    	<groupId>edu.stanford.ramcloud</groupId>
-    	<artifactId>jramcloud</artifactId>
-    	<version>1.0.0</version>
-    	<systemPath>/home/jdellit/ramcloud/bindings/java/</systemPath>
-    </dependency>
   </dependencies>
 </project>
