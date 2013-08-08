@@ -43,7 +43,7 @@ public class RamCloudGraph implements Graph {
     if(label == null)
       throw ExceptionFactory.edgeLabelCanNotBeNull();
     
-    RamCloudEdge edge = new RamCloudEdge((long)id, (RamCloudVertex)outVertex, (RamCloudVertex)inVertex, label, this);
+    RamCloudEdge edge = new RamCloudEdge((Long)id, (RamCloudVertex)outVertex, (RamCloudVertex)inVertex, label, this);
     
     ramCloudWriteEdge(edge);
       
@@ -56,12 +56,12 @@ public class RamCloudGraph implements Graph {
     if(id == null)
       throw ExceptionFactory.vertexIdCanNotBeNull();
     
-    return new RamCloudVertex((long)id, this);
+    return new RamCloudVertex((Long)id, this);
   }
 
   
   public String getProperty(Object id, String key) {
-    byte[] rckey = ByteBuffer.allocate(8 + key.length()).putLong((long)id).put(key.getBytes()).array();
+    byte[] rckey = ByteBuffer.allocate(8 + key.length()).putLong((Long)id).put(key.getBytes()).array();
     
     JRamCloud.Object o = ramcloud.read(prop_table_id, rckey);
     
@@ -69,7 +69,7 @@ public class RamCloudGraph implements Graph {
   }
   
   public void setProperty(Object id, String key, Object value) {
-    byte[] rckey = ByteBuffer.allocate(8 + key.length()).putLong((long)id).put(key.getBytes()).array();
+    byte[] rckey = ByteBuffer.allocate(8 + key.length()).putLong((Long)id).put(key.getBytes()).array();
     byte[] rcvalue = ((String)value).getBytes();
     
     ramcloud.write(prop_table_id, rckey, rcvalue);
@@ -78,7 +78,7 @@ public class RamCloudGraph implements Graph {
   @Override
   public Edge getEdge(Object id) {
     // TODO Auto-generated method stub
-    byte[] key = ByteBuffer.allocate(8).putLong((long)id).array();    
+    byte[] key = ByteBuffer.allocate(8).putLong((Long)id).array();    
     
     JRamCloud.Object o = ramcloud.read(edge_table_id, key);
     
@@ -98,7 +98,7 @@ public class RamCloudGraph implements Graph {
   }
 
   private void ramCloudWriteEdge(RamCloudEdge edge) {
-    byte[] key = ByteBuffer.allocate(8).putLong((long)edge.getId()).array();
+    byte[] key = ByteBuffer.allocate(8).putLong((Long)edge.getId()).array();
     byte[] value = ByteBuffer.allocate(16 + edge.label.length()).putLong((long)edge.outVertex.getId()).putLong((long)edge.inVertex.getId()).put(edge.label.getBytes()).array();
     
     // Debug
@@ -129,7 +129,7 @@ public class RamCloudGraph implements Graph {
   @Override
   public Vertex getVertex(Object id) {
     // TODO Auto-generated method stub
-    return new RamCloudVertex((long)id, this);
+    return new RamCloudVertex((Long)id, this);
   }
 
   @Override

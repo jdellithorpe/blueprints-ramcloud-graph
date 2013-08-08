@@ -6,7 +6,7 @@ import com.tinkerpop.blueprints.Element;
 
 abstract class RamCloudElement implements Element {
 
-  public long id;
+  public Long id;
   private RamCloudGraph graph;
   
   public RamCloudElement(long id, RamCloudGraph graph) {
