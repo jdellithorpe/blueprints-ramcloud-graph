@@ -94,12 +94,12 @@ public class RamCloudGraph implements Graph {
     //System.out.println("inVertexId = " + inVertexId);
     //System.out.println("label = " + label);
     
-    return new RamCloudEdge((long)id, new RamCloudVertex(outVertexId, this), new RamCloudVertex(inVertexId, this), label, this);
+    return new RamCloudEdge((Long)id, new RamCloudVertex(outVertexId, this), new RamCloudVertex(inVertexId, this), label, this);
   }
 
   private void ramCloudWriteEdge(RamCloudEdge edge) {
     byte[] key = ByteBuffer.allocate(8).putLong((Long)edge.getId()).array();
-    byte[] value = ByteBuffer.allocate(16 + edge.label.length()).putLong((long)edge.outVertex.getId()).putLong((long)edge.inVertex.getId()).put(edge.label.getBytes()).array();
+    byte[] value = ByteBuffer.allocate(16 + edge.label.length()).putLong((Long)edge.outVertex.getId()).putLong((Long)edge.inVertex.getId()).put(edge.label.getBytes()).array();
     
     // Debug
     //System.out.println("writing key = " + Arrays.toString(key));
