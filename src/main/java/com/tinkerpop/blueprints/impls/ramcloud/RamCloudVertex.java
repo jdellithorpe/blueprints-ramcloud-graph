@@ -1,37 +1,79 @@
 package com.tinkerpop.blueprints.impls.ramcloud;
 
+import java.nio.ByteBuffer;
+import java.util.Set;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.VertexQuery;
 
-public class RamCloudVertex extends RamCloudElement implements Vertex {
+public class RamCloudVertex implements Vertex {
 
+  private long id;
+  private RamCloudGraph graph;
+  private byte[] rcKey;
+  
   public RamCloudVertex(long id, RamCloudGraph graph) {
-    // TODO Auto-generated constructor stub
-    super(id, graph);
+    this.id = id;
+    this.graph = graph;
+    
+    this.rcKey = ByteBuffer.allocate(8).putLong(this.id).array();
   }
 
   @Override
-  public Edge addEdge(String arg0, Vertex arg1) {
-    // TODO Auto-generated method stub
-    return null;
+  public <T> T getProperty(String key) {
+    return graph.getProperty(this, key);
   }
 
   @Override
-  public Iterable<Edge> getEdges(Direction arg0, String... arg1) {
-    // TODO Auto-generated method stub
-    return null;
+  public Set<String> getPropertyKeys() {
+    return graph.getPropertyKeys(this);
   }
 
   @Override
-  public Iterable<Vertex> getVertices(Direction arg0, String... arg1) {
+  public void setProperty(String key, Object value) {
+    graph.setProperty(this, key, value);
+  }
+
+  @Override
+  public <T> T removeProperty(String key) {
+    return graph.removeProperty(this, key);
+  }
+
+  @Override
+  public void remove() {
+    graph.removeVertex(this);
+  }
+
+  @Override
+  public Object getId() {
+    return id;
+  }
+  
+  public byte[] getRcKey() {
+    return rcKey;
+  }
+  
+  @Override
+  public Iterable<Edge> getEdges(Direction direction, String... labels) {
+    return graph.getEdges(this, direction, labels);
+  }
+
+  @Override
+  public Iterable<Vertex> getVertices(Direction direction, String... labels) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public VertexQuery query() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Edge addEdge(String label, Vertex inVertex) {
     // TODO Auto-generated method stub
     return null;
   }
