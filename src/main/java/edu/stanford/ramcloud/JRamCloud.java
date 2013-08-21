@@ -81,6 +81,21 @@ public class JRamCloud {
         final public long version;
     }
 
+    public class TableEnumerator {
+        private long tableEnumeratorObjectPointer = 0;
+        private long ramCloudObjectPointer = 0;
+        
+        public TableEnumerator(long tableId)
+        {
+            ramCloudObjectPointer = ramcloudObjectPointer;
+            tableEnumeratorObjectPointer = init(tableId);
+        }
+        
+        private native long init(long tableId);
+        public native boolean hasNext();
+        public native Object next();
+    }
+
     /**
      * Connect to the RAMCloud cluster specified by the given coordinator's
      * service locator string. This causes the JNI code to instantiate the
@@ -192,7 +207,7 @@ public class JRamCloud {
     {
         return write(tableId, key.getBytes(), value, rules);
     }
-
+    
     private static native long connect(String coordinatorLocator);
     private static native void disconnect(long ramcloudObjectPointer);
 

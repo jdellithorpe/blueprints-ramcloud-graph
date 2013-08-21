@@ -29,7 +29,13 @@ import java.util.concurrent.atomic.*;
 import edu.stanford.ramcloud.JRamCloud;
 
 public class RamCloudGraph implements Graph {
-
+  /* TODO
+   *  - The ByteBuffer class is used to parse the values stored in RAMCloud, 
+   *  and when multiple clients are involved in reading/writing values, 
+   *  byte order is going to be important, but at the moment we leave it to 
+   *  every machine's default. We need to explicitly specify this.
+   */
+  
   static {
     System.loadLibrary("edu_stanford_ramcloud_JRamCloud");
   }
@@ -38,9 +44,9 @@ public class RamCloudGraph implements Graph {
   
   private JRamCloud ramCloudClient;
   
-  private long vertTableId; //(vertex_id) --> ( (n,d,l), (n,d,l), ... )
-  private long edgePropTableId; //(edge_id) -> ( (kl,vl,k,v), (kl,vl,k,v), ... )
-  private long vertPropTableId; //(vertex_id) -> ( (kl,vl,k,v), (kl,vl,k,v), ... )
+  private long vertTableId; //(vertex_id) --> ( (n,d,ll,l), (n,d,ll,l), ... )
+  private long edgePropTableId; //(edge_id) -> ( (kl,k,vl,v), (kl,k,vl,v), ... )
+  private long vertPropTableId; //(vertex_id) -> ( (kl,k,vl,v), (kl,k,vl,v), ... )
   
   private String VERT_TABLE_NAME = "verts";
   private String EDGE_PROP_TABLE_NAME = "edge_props";
@@ -62,12 +68,20 @@ public class RamCloudGraph implements Graph {
 
   @Override
   public Features getFeatures() {
-    // TODO Auto-generated method stub
-    return null;
+    Features feat = new Features();
+    feat.isPersistent = true;
+    return feat;
   }
 
   @Override
   public Vertex addVertex(Object id) {
+    /* TODO
+     *  - Presently we don't check if the vertex already exists. In this case,
+     *  the vertex properties are deleted, and the edge list for the vertex is
+     *  erased, possibly leaving dangling edges. Since this safety check is 
+     *  not presently made, we are depending on the client to never make the 
+     *  mistake of creating a vertex that already exists.
+     */
     /*
      * Logical steps:
      *  - Create a new RamCloudVertex object
@@ -113,6 +127,17 @@ public class RamCloudGraph implements Graph {
 
   @Override
   public void removeVertex(Vertex vertex) {
+    /* TODO
+     *  - Currently the algorithm removes the edges from both this vertex and also
+     *  from all neighbor vertices' edge lists, but only the latter is necessary
+     *  since this vertex is completely deleted. A further optimization would be 
+     *  to group the edges by neighbor vertex, and delete them in batches, which 
+     *  would reduce the total number of RAMCloud access to 1 read and 1 write for 
+     *  each neighbor vertex, 1 delete on this vertex, and 1 delete on the props.
+     *  But presently, edges are deleted one by one, and this is not efficient.
+     *   - Check to see what happens in error cases (i.e. the vertex does not 
+     *   exist) and make sure that's handled correctly.
+     */
     // Remove all edges for which this vertex is an endpoint
     Iterator<Edge> edges = getEdges((RamCloudVertex)vertex, Direction.BOTH).iterator();
     while(edges.hasNext()) {
@@ -129,18 +154,43 @@ public class RamCloudGraph implements Graph {
 
   @Override
   public Iterable<Vertex> getVertices() {
-    // TODO Auto-generated method stub
-    return null;
+    LOGGER.log(Level.FINE, "Getting all the vertices in the graph...");
+    JRamCloud.TableEnumerator tableEnum = ramCloudClient.new TableEnumerator(vertPropTableId);
+    
+    ArrayList<Vertex> vertArray = new ArrayList<Vertex>();
+    
+    while(tableEnum.hasNext())
+      vertArray.add(new RamCloudVertex(tableEnum.next().key, this));
+    
+    return (Iterable<Vertex>)vertArray;
   }
 
   @Override
   public Iterable<Vertex> getVertices(String key, Object value) {
-    // TODO Auto-generated method stub
-    return null;
+    LOGGER.log(Level.FINE, "Getting all the vertices in the graph with (key="+key+",value="+value+")...");
+    JRamCloud.TableEnumerator tableEnum = ramCloudClient.new TableEnumerator(vertPropTableId);
+    
+    ArrayList<Vertex> vertArray = new ArrayList<Vertex>();
+    JRamCloud.Object tableEntry;
+    
+    while(tableEnum.hasNext()) {
+      tableEntry = tableEnum.next();
+      HashMap<String, Object> propMap = new HashMap<String, Object>();
+      deserializeProperties(tableEntry.value, propMap);
+      if(propMap.containsKey(key) && propMap.get(key).equals(value))
+        vertArray.add(new RamCloudVertex(tableEntry.key, this));
+    }
+    
+    return (Iterable<Vertex>)vertArray;
   }
 
   @Override
   public Edge addEdge(Object id, Vertex outVertex, Vertex inVertex, String label) {
+    /* TODO
+     *  - Might want to check to make sure the vertices already exists
+     *  - Might want to check to see if the edge already exists between the two vertices
+     *  - Return the proper exception in the event of an error
+     */
     /*
      * Logical steps:
      *  - Create a new RamCloudEdge object
@@ -197,17 +247,20 @@ public class RamCloudGraph implements Graph {
 
   @Override
   public Edge getEdge(Object id) {
-    ByteBuffer edgeId = ByteBuffer.wrap((byte[])id);
-    long outVertexId = edgeId.getLong();
-    RamCloudVertex outVertex = new RamCloudVertex(outVertexId, this);
-    long inVertexId = edgeId.getLong();
-    RamCloudVertex inVertex = new RamCloudVertex(inVertexId, this);
-    String label = new String((byte[])id, 16, ((byte[])id).length - 16);
-    return new RamCloudEdge(outVertex, inVertex, label, this);
+    /* TODO
+     *  - I'm assuming right now that the edge actually exists... but we
+     *  might want to do a check for that and return null or throw an 
+     *  exception in the case that the edge actually doesn't exist in 
+     *  RAMCloud.
+     */
+    return new RamCloudEdge((byte[])id, this);
   }
 
   @Override
   public void removeEdge(Edge edge) {
+    /* TODO
+     *  - It's possible that the edge doesn't exist, in which case nothing bad will happen.
+     */
     RamCloudVertex outVertex = (RamCloudVertex)edge.getVertex(Direction.OUT);
     RamCloudVertex inVertex = (RamCloudVertex)edge.getVertex(Direction.IN);
     byte[] rcKey = ((RamCloudEdge)edge).getRcKey();
@@ -283,17 +336,74 @@ public class RamCloudGraph implements Graph {
 
   @Override
   public Iterable<Edge> getEdges() {
-    // TODO Auto-generated method stub
-    return null;
+    LOGGER.log(Level.FINE, "Getting all the edges in the graph...");
+    JRamCloud.TableEnumerator tableEnum = ramCloudClient.new TableEnumerator(edgePropTableId);
+    
+    ArrayList<Edge> edgeArray = new ArrayList<Edge>();
+    
+    while(tableEnum.hasNext())
+      edgeArray.add(new RamCloudEdge(tableEnum.next().key, this));
+    
+    return (Iterable<Edge>)edgeArray;
   }
 
   @Override
   public Iterable<Edge> getEdges(String key, Object value) {
-    // TODO Auto-generated method stub
-    return null;
+    LOGGER.log(Level.FINE, "Getting all the vertices in the graph with (key="+key+",value="+value+")...");
+    JRamCloud.TableEnumerator tableEnum = ramCloudClient.new TableEnumerator(edgePropTableId);
+    
+    ArrayList<Edge> edgeArray = new ArrayList<Edge>();
+    JRamCloud.Object tableEntry;
+    
+    while(tableEnum.hasNext()) {
+      tableEntry = tableEnum.next();
+      HashMap<String, Object> propMap = new HashMap<String, Object>();
+      deserializeProperties(tableEntry.value, propMap);
+      if(propMap.containsKey(key) && propMap.get(key).equals(value))
+        edgeArray.add(new RamCloudEdge(tableEntry.key, this));
+    }
+    
+    return (Iterable<Edge>)edgeArray;
+  }
+  
+  private Iterable<Edge> parseVertexTableEntry(byte[] key, byte[] value) {
+    ByteBuffer edges = ByteBuffer.wrap(value);
+    ArrayList<Edge> edgeArray = new ArrayList<Edge>();
+    
+    long vertexId = ByteBuffer.wrap(key).getLong();
+    RamCloudVertex vertex = new RamCloudVertex(vertexId, this);
+    
+    LOGGER.log(Level.FINE, "Parsing vertex table entry for vertex " + vertexId);
+    
+    while(edges.remaining() > 0) {
+      long edgeNeighborId = edges.getLong();
+      Direction edgeDirection = byteCodeToDirection(edges.get());
+      short labelLength = edges.getShort();
+      String label = new String(edges.array(), edges.position(), labelLength);
+      edges.position(edges.position() + labelLength);
+      
+      LOGGER.log(Level.FINER, "Edge: (" + edgeNeighborId + ", " + edgeDirection.toString() + ", " + label + ")");
+      
+      if(edgeDirection == Direction.OUT) {
+        edgeArray.add(new RamCloudEdge(vertex, new RamCloudVertex(edgeNeighborId, this), label, this));
+      } else if(edgeDirection == Direction.IN) {
+        edgeArray.add(new RamCloudEdge(new RamCloudVertex(edgeNeighborId, this), vertex, label, this));
+      } else {
+        LOGGER.log(Level.SEVERE, "Read edge (" + edgeNeighborId + ", " + edgeDirection.toString() + ", " + label + ") but the edge direction is not supported");
+        return null;
+      }
+    }
+    
+    LOGGER.log(Level.FINER,  "Finished parsing vertex table entry for vertex " + vertex.getId());
+    
+    return (Iterable<Edge>) edgeArray;
   }
   
   public Iterable<Edge> getEdges(RamCloudVertex vertex, Direction direction, String... labels) {
+    /* TODO
+     *  - In the event that the vertex does not exist, this function will simply return an empty
+     *  list. We might want to throw an exception in this case, however.
+     */
     JRamCloud.Object vertTableEntry = ramCloudClient.read(vertTableId, vertex.getRcKey());
     ByteBuffer edges = ByteBuffer.wrap(vertTableEntry.value);
     ArrayList<Edge> edgeArray = new ArrayList<Edge>();
@@ -376,6 +486,9 @@ public class RamCloudGraph implements Graph {
   }
 
   public <T> T getProperty(Element element, String key) {
+    /* TODO
+     *  - Robustify this function to handle elements that do not exist
+     */
     byte[] rcKey;
     long tableId;
     HashMap<String, Object> propMap = new HashMap<String, Object>();
@@ -400,6 +513,9 @@ public class RamCloudGraph implements Graph {
   }
 
   public Set<String> getPropertyKeys(Element element) {
+    /* TODO
+     *  - Robustify this function to handle elements that do not exist
+     */
     byte[] rcKey;
     long tableId;
     HashMap<String, Object> propMap = new HashMap<String, Object>();
@@ -424,6 +540,9 @@ public class RamCloudGraph implements Graph {
   }
 
   public void setProperty(Element element, String key, Object value) {
+    /* TODO
+     *  - Robustify this function to handle elements that do not exist
+     */
     byte[] rcKey;
     long tableId;
     HashMap<String, Object> propMap = new HashMap<String, Object>();
@@ -449,6 +568,9 @@ public class RamCloudGraph implements Graph {
   }
 
   public <T> T removeProperty(Element element, String key) {
+    /* TODO
+     *  - Robustify this function to handle elements that do not exist
+     */
     byte[] rcKey;
     long tableId;
     T oldValue;
@@ -488,7 +610,7 @@ public class RamCloudGraph implements Graph {
   }
   
   public static void main(String[] args) {
-    RamCloudGraph rcgraph = new RamCloudGraph("infrc:host=192.168.1.101,port=12246", Level.INFO);
+    RamCloudGraph rcgraph = new RamCloudGraph("infrc:host=192.168.1.101,port=12246", Level.FINER);
     
     Vertex chenchen = rcgraph.addVertex((long)1);
     Vertex kate = rcgraph.addVertex((long)2);
@@ -518,6 +640,9 @@ public class RamCloudGraph implements Graph {
     System.out.println(jonathan.getProperty("name"));
     System.out.println(jonathan.getProperty("age"));
     
+    edge0.setProperty("firstdate", "20130329");
+    
+    /*
     rcgraph.removeVertex(kyle);
     
     edges = rcgraph.getEdges((RamCloudVertex)jonathan, Direction.BOTH).iterator();
@@ -525,6 +650,24 @@ public class RamCloudGraph implements Graph {
       RamCloudEdge edge = (RamCloudEdge)edges.next();
       System.out.println(edge.toString());
     }
+    */
+    
+    edges = rcgraph.getEdges().iterator();
+    while(edges.hasNext()) {
+      RamCloudEdge edge = (RamCloudEdge)edges.next();
+      System.out.println(edge.toString());
+    }
+    
+    Iterator<Vertex> verts = rcgraph.getVertices("age", "27").iterator();
+    while(verts.hasNext()) {
+      RamCloudVertex vert = (RamCloudVertex)verts.next();
+      System.out.println(vert.toString());
+    }
+    
+    edges = rcgraph.getEdges("firstdate", "20130329").iterator();
+    while(edges.hasNext()) {
+      RamCloudEdge edge = (RamCloudEdge)edges.next();
+      System.out.println(edge.toString());
+    }
   }
-
 }

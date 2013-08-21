@@ -20,6 +20,13 @@ public class RamCloudVertex implements Vertex {
     
     this.rcKey = ByteBuffer.allocate(8).putLong(this.id).array();
   }
+  
+  public RamCloudVertex(byte[] rcKey, RamCloudGraph graph) {
+    this.id = ByteBuffer.wrap(rcKey).getLong();
+    this.graph = graph;
+    
+    this.rcKey = rcKey;
+  }
 
   @Override
   public <T> T getProperty(String key) {
@@ -77,5 +84,8 @@ public class RamCloudVertex implements Vertex {
     // TODO Auto-generated method stub
     return null;
   }
-
+  
+  public String toString() {
+    return new String(id + ":" + rcKey);
+  }
 }

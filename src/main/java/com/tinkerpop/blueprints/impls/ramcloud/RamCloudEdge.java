@@ -26,6 +26,16 @@ public class RamCloudEdge implements Edge {
     this.rcKey = ByteBuffer.allocate(16 + label.length()).put(outVertex.getRcKey()).put(inVertex.getRcKey()).put(label.getBytes()).array();
     this.id = (Object)rcKey;
   }
+  
+  public RamCloudEdge(byte[] rcKey, RamCloudGraph graph) {
+    ByteBuffer edgeId = ByteBuffer.wrap(rcKey);
+    outVertex = new RamCloudVertex(edgeId.getLong(), graph);
+    inVertex = new RamCloudVertex(edgeId.getLong(), graph);
+    label = new String(rcKey, 16, rcKey.length - 16);
+    this.graph = graph;
+    this.rcKey = rcKey;
+    this.id = (Object)rcKey;
+  }
 
   @Override
   public <T> T getProperty(String key) {
