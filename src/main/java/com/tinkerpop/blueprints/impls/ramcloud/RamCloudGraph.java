@@ -68,6 +68,7 @@ public class RamCloudGraph implements Graph {
 
   @Override
   public Features getFeatures() {
+    LOGGER.log(Level.FINE, "Getting features of the graph...");
     Features feat = new Features();
     feat.isPersistent = true;
     return feat;
@@ -103,6 +104,7 @@ public class RamCloudGraph implements Graph {
 
   @Override
   public Vertex getVertex(Object id) {
+    LOGGER.log(Level.FINE, "Getting vertex with id: " + (Long)id);
     /*
      * Logical steps:
      *  - Create RamCloudVertex object
@@ -112,8 +114,6 @@ public class RamCloudGraph implements Graph {
      */
     
     RamCloudVertex vertex = new RamCloudVertex((Long)id, this);
-    
-    LOGGER.log(Level.FINE, "Reading vertex with id: " + (Long)id);
     
     try {
       ramCloudClient.read(vertTableId, vertex.getRcKey());
@@ -127,6 +127,7 @@ public class RamCloudGraph implements Graph {
 
   @Override
   public void removeVertex(Vertex vertex) {
+    LOGGER.log(Level.FINE, "Removing vertex with id: " + (Long)vertex.getId());
     /* TODO
      *  - Currently the algorithm removes the edges from both this vertex and also
      *  from all neighbor vertices' edge lists, but only the latter is necessary
@@ -253,19 +254,22 @@ public class RamCloudGraph implements Graph {
      *  exception in the case that the edge actually doesn't exist in 
      *  RAMCloud.
      */
-    return new RamCloudEdge((byte[])id, this);
+    RamCloudEdge edge = new RamCloudEdge((byte[])id, this);
+    
+    LOGGER.log(Level.FINE, "Getting edge: " + (Long)edge.getVertex(Direction.OUT).getId() + "->" + (Long)edge.getVertex(Direction.IN).getId() + ":" + edge.getLabel());
+    
+    return edge;
   }
 
   @Override
   public void removeEdge(Edge edge) {
+    LOGGER.log(Level.FINE, "Removing edge: " + (Long)edge.getVertex(Direction.OUT).getId() + "->" + (Long)edge.getVertex(Direction.IN).getId() + ":" + edge.getLabel());
     /* TODO
      *  - It's possible that the edge doesn't exist, in which case nothing bad will happen.
      */
     RamCloudVertex outVertex = (RamCloudVertex)edge.getVertex(Direction.OUT);
     RamCloudVertex inVertex = (RamCloudVertex)edge.getVertex(Direction.IN);
     byte[] rcKey = ((RamCloudEdge)edge).getRcKey();
-    
-    LOGGER.log(Level.FINE, "Removing edge: " + outVertex.getId() + "->" + inVertex.getId() + ":" + edge.getLabel());
     
     ramCloudClient.remove(edgePropTableId, rcKey);
     LOGGER.log(Level.FINER, "Removed property table entry");
@@ -373,7 +377,7 @@ public class RamCloudGraph implements Graph {
     long vertexId = ByteBuffer.wrap(key).getLong();
     RamCloudVertex vertex = new RamCloudVertex(vertexId, this);
     
-    LOGGER.log(Level.FINE, "Parsing vertex table entry for vertex " + vertexId);
+    LOGGER.log(Level.FINER, "Parsing vertex table entry for vertex " + vertexId);
     
     while(edges.remaining() > 0) {
       long edgeNeighborId = edges.getLong();
@@ -400,6 +404,7 @@ public class RamCloudGraph implements Graph {
   }
   
   public Iterable<Edge> getEdges(RamCloudVertex vertex, Direction direction, String... labels) {
+    LOGGER.log(Level.FINE, "Getting edges for vertex " + vertex.getId() + " in direction " + direction.toString() + " for labels: " + labels.toString());
     /* TODO
      *  - In the event that the vertex does not exist, this function will simply return an empty
      *  list. We might want to throw an exception in this case, however.
@@ -407,8 +412,6 @@ public class RamCloudGraph implements Graph {
     JRamCloud.Object vertTableEntry = ramCloudClient.read(vertTableId, vertex.getRcKey());
     ByteBuffer edges = ByteBuffer.wrap(vertTableEntry.value);
     ArrayList<Edge> edgeArray = new ArrayList<Edge>();
-    
-    LOGGER.log(Level.FINE, "Reading edges for vertex " + vertex.getId());
     
     while(edges.remaining() > 0) {
       long edgeNeighborId = edges.getLong();
@@ -495,10 +498,12 @@ public class RamCloudGraph implements Graph {
     
     if(element instanceof RamCloudVertex) {
       RamCloudVertex vertex = (RamCloudVertex)element;
+      LOGGER.log(Level.FINE, "Getting property " + key + " for vertex " + vertex.getId());
       rcKey = vertex.getRcKey();
       tableId = vertPropTableId;
     } else if(element instanceof RamCloudEdge) {
       RamCloudEdge edge = (RamCloudEdge)element;
+      LOGGER.log(Level.FINE, "Getting property " + key + " for edge " + (Long)edge.getVertex(Direction.OUT).getId() + "->" + (Long)edge.getVertex(Direction.IN).getId() + ":" + edge.getLabel());
       rcKey = edge.getRcKey();
       tableId = edgePropTableId;
     } else {
@@ -522,10 +527,12 @@ public class RamCloudGraph implements Graph {
     
     if(element instanceof RamCloudVertex) {
       RamCloudVertex vertex = (RamCloudVertex)element;
+      LOGGER.log(Level.FINE, "Getting property keys for vertex " + vertex.getId());
       rcKey = vertex.getRcKey();
       tableId = vertPropTableId;
     } else if(element instanceof RamCloudEdge) {
       RamCloudEdge edge = (RamCloudEdge)element;
+      LOGGER.log(Level.FINE, "Getting property keys for edge " + (Long)edge.getVertex(Direction.OUT).getId() + "->" + (Long)edge.getVertex(Direction.IN).getId() + ":" + edge.getLabel());
       rcKey = edge.getRcKey();
       tableId = edgePropTableId;
     } else {
@@ -549,10 +556,12 @@ public class RamCloudGraph implements Graph {
     
     if(element instanceof RamCloudVertex) {
       RamCloudVertex vertex = (RamCloudVertex)element;
+      LOGGER.log(Level.FINE, "Setting property " + key + " for vertex " + vertex.getId());
       rcKey = vertex.getRcKey();
       tableId = vertPropTableId;
     } else if(element instanceof RamCloudEdge) {
       RamCloudEdge edge = (RamCloudEdge)element;
+      LOGGER.log(Level.FINE, "Setting property " + key + " for edge " + (Long)edge.getVertex(Direction.OUT).getId() + "->" + (Long)edge.getVertex(Direction.IN).getId() + ":" + edge.getLabel());
       rcKey = edge.getRcKey();
       tableId = edgePropTableId;
     } else {
@@ -578,10 +587,12 @@ public class RamCloudGraph implements Graph {
     
     if(element instanceof RamCloudVertex) {
       RamCloudVertex vertex = (RamCloudVertex)element;
+      LOGGER.log(Level.FINE, "Removing property " + key + " for vertex " + vertex.getId());
       rcKey = vertex.getRcKey();
       tableId = vertPropTableId;
     } else if(element instanceof RamCloudEdge) {
       RamCloudEdge edge = (RamCloudEdge)element;
+      LOGGER.log(Level.FINE, "Removing property " + key + " for edge " + (Long)edge.getVertex(Direction.OUT).getId() + "->" + (Long)edge.getVertex(Direction.IN).getId() + ":" + edge.getLabel());
       rcKey = edge.getRcKey();
       tableId = edgePropTableId;
     } else {
@@ -599,14 +610,15 @@ public class RamCloudGraph implements Graph {
   
   @Override
   public GraphQuery query() {
+    LOGGER.log(Level.FINE, "Calling GraphQuery() (NOT IMPLEMENTED)");
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public void shutdown() {
+    LOGGER.log(Level.FINE, "Calling shutdown() (NOT IMPLEMENTED)");
     // TODO Auto-generated method stub
-
   }
   
   public static void main(String[] args) {

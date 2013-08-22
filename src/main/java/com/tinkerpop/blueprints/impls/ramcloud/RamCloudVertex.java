@@ -2,6 +2,8 @@ package com.tinkerpop.blueprints.impls.ramcloud;
 
 import java.nio.ByteBuffer;
 import java.util.Set;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -69,8 +71,22 @@ public class RamCloudVertex implements Vertex {
 
   @Override
   public Iterable<Vertex> getVertices(Direction direction, String... labels) {
-    // TODO Auto-generated method stub
-    return null;
+    Iterator<Edge> edges = getEdges(direction, labels).iterator();
+    
+    ArrayList<Vertex> vertexArray = new ArrayList<Vertex>();
+    
+    while(edges.hasNext()) {
+      RamCloudEdge edge = (RamCloudEdge)edges.next();
+      if(edge.getVertex(Direction.OUT).equals(this)) {
+        vertexArray.add(edge.getVertex(Direction.IN));
+      } else if(edge.getVertex(Direction.IN).equals(this)) {
+        vertexArray.add(edge.getVertex(Direction.OUT));
+      } else {
+        return null;
+      }
+    }
+    
+    return (Iterable<Vertex>)vertexArray;
   }
 
   @Override
@@ -81,8 +97,7 @@ public class RamCloudVertex implements Vertex {
 
   @Override
   public Edge addEdge(String label, Vertex inVertex) {
-    // TODO Auto-generated method stub
-    return null;
+    return graph.addEdge(null, this, inVertex, label);
   }
   
   public String toString() {
