@@ -2,7 +2,12 @@ package com.tinkerpop.blueprints.impls.ramcloud;
 
 import java.util.Set;
 import java.nio.ByteBuffer;
+import java.util.logging.Handler;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import com.sun.jersey.core.util.Base64;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -10,33 +15,35 @@ import com.tinkerpop.blueprints.util.ExceptionFactory;
 
 public class RamCloudEdge implements Edge {
 
-  private Object id;
   private RamCloudVertex outVertex;
   private RamCloudVertex inVertex;
   private String label;
   private RamCloudGraph graph;
   private byte[] rcKey;
   
+  private static Logger LOGGER = Logger.getLogger(RamCloudGraph.class.getName());
+  
   public RamCloudEdge(RamCloudVertex outVertex, RamCloudVertex inVertex, String label, RamCloudGraph graph) {
+    this.graph = graph;
+    
     this.outVertex = outVertex;
     this.inVertex = inVertex;
     this.label = label;
-    this.graph = graph;
     
     this.rcKey = ByteBuffer.allocate(16 + label.length()).put(outVertex.getRcKey()).put(inVertex.getRcKey()).put(label.getBytes()).array();
-    this.id = (Object)rcKey;
   }
   
   public RamCloudEdge(byte[] rcKey, RamCloudGraph graph) {
+    this.graph = graph;
+    
     ByteBuffer edgeId = ByteBuffer.wrap(rcKey);
     outVertex = new RamCloudVertex(edgeId.getLong(), graph);
     inVertex = new RamCloudVertex(edgeId.getLong(), graph);
     label = new String(rcKey, 16, rcKey.length - 16);
-    this.graph = graph;
+    
     this.rcKey = rcKey;
-    this.id = (Object)rcKey;
   }
-
+  
   @Override
   public <T> T getProperty(String key) {
     return graph.getProperty(this, key);
@@ -64,10 +71,13 @@ public class RamCloudEdge implements Edge {
 
   @Override
   public Object getId() {
-    return id;
+    LOGGER.log(Level.FINE, "Getting id of edge " + outVertex.getId() + "->" + inVertex.getId() + ":" + label);
+    
+    return (Object)new String(Base64.encode(rcKey));
   }
   
   public byte[] getRcKey() {
+    LOGGER.log(Level.FINE, "Getting rcKey of edge " + outVertex.getId() + "->" + inVertex.getId() + ":" + label);
     return rcKey;
   }
 
@@ -77,6 +87,8 @@ public class RamCloudEdge implements Edge {
   
   @Override
   public Vertex getVertex(Direction direction) throws IllegalArgumentException {
+    LOGGER.log(Level.FINE, "Getting " + direction.toString() + " vertex of edge " + outVertex.getId() + "->" + inVertex.getId() + ":" + label);
+    
     if(direction.equals(Direction.OUT))
       return outVertex;
     else if(direction.equals(Direction.IN))
@@ -87,6 +99,7 @@ public class RamCloudEdge implements Edge {
 
   @Override
   public String getLabel() {
+    LOGGER.log(Level.FINE, "Getting label of edge: " + label);
     return label;
   }
 

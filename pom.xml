@@ -31,5 +31,10 @@
     	<artifactId>rexster-core</artifactId>
     	<version>2.4.0</version>
     </dependency>
+    <dependency>
+    	<groupId>com.tinkerpop.blueprints</groupId>
+    	<artifactId>blueprints-test</artifactId>
+    	<version>2.4.0</version>
+    </dependency>
   </dependencies>
 </project>

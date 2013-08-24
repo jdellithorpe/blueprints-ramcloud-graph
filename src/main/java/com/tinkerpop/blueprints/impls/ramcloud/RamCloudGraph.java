@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.io.Serializable;
 
+import com.sun.jersey.core.util.Base64;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Features;
@@ -18,13 +19,12 @@ import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.GraphQuery;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.ExceptionFactory;
+import com.tinkerpop.blueprints.util.DefaultGraphQuery;
 
 import java.util.logging.Handler;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.LogManager;
-import java.util.concurrent.atomic.*;
 
 import edu.stanford.ramcloud.JRamCloud;
 
@@ -52,6 +52,10 @@ public class RamCloudGraph implements Graph {
   private String EDGE_PROP_TABLE_NAME = "edge_props";
   private String VERT_PROP_TABLE_NAME = "vert_props";
   
+  public RamCloudGraph(String coordinatorLocation) {
+    this(coordinatorLocation, Level.INFO);
+  }
+  
   public RamCloudGraph(String coordinatorLocation, Level logLevel) {
     LOGGER.setLevel(logLevel);
     Handler consoleHandler = new ConsoleHandler();
@@ -65,17 +69,63 @@ public class RamCloudGraph implements Graph {
     edgePropTableId = ramCloudClient.createTable(EDGE_PROP_TABLE_NAME);
     vertPropTableId = ramCloudClient.createTable(VERT_PROP_TABLE_NAME);
   }
-
+  
   @Override
   public Features getFeatures() {
     LOGGER.log(Level.FINE, "Getting features of the graph...");
     Features feat = new Features();
+    
+    feat.supportsSerializableObjectProperty = false;
+    feat.supportsBooleanProperty = false;
+    feat.supportsDoubleProperty = false;
+    feat.supportsFloatProperty = false;
+    feat.supportsIntegerProperty = false;
+    feat.supportsPrimitiveArrayProperty = false;
+    feat.supportsUniformListProperty = false;
+    feat.supportsMixedListProperty = false;
+    feat.supportsLongProperty = false;
+    feat.supportsMapProperty = false;
+    feat.supportsStringProperty = true;
+
+    feat.supportsDuplicateEdges = false;
+    feat.supportsSelfLoops = false;
+    feat.isPersistent = true;
+    feat.isWrapper = false;
+    feat.supportsVertexIteration = true;
+    feat.supportsEdgeIteration = true;
+    feat.supportsVertexIndex = false;
+    feat.supportsEdgeIndex = false;
+    feat.ignoresSuppliedIds = true;
+    feat.supportsTransactions = false;
+    feat.supportsIndices = false;
+    feat.supportsKeyIndices = false;
+    feat.supportsVertexKeyIndex = false;
+    feat.supportsEdgeKeyIndex = false;
+    feat.supportsEdgeRetrieval = true;
+    feat.supportsVertexProperties = true;
+    feat.supportsEdgeProperties = true;
+    feat.supportsThreadedTransactions = false;
+    
     feat.isPersistent = true;
     return feat;
   }
 
   @Override
   public Vertex addVertex(Object id) {
+    Long longId;
+    
+    if(id instanceof Long) {
+      longId = (Long)id;
+    } else if(id instanceof Integer) {
+      longId = ((Integer) id).longValue();
+    } else if(id instanceof String) {
+      longId = Long.parseLong((String) id, 10);
+    } else if(id instanceof byte[]) {
+      longId = ByteBuffer.wrap((byte[]) id).getLong();
+    } else {
+      LOGGER.log(Level.WARNING, "id argument " + id.toString() + " of type " + id.getClass() + " is not supported. Returning null.");
+      return null;
+    }
     /* TODO
      *  - Presently we don't check if the vertex already exists. In this case,
      *  the vertex properties are deleted, and the edge list for the vertex is
@@ -91,8 +141,8 @@ public class RamCloudGraph implements Graph {
      *   - Put an empty entry in the vertex property table
      */
     
-    LOGGER.log(Level.FINE, "Creating new vertex with id: " + (Long)id);
-    RamCloudVertex newVertex = new RamCloudVertex((Long)id, this);
+    LOGGER.log(Level.FINE, "Creating new vertex with id: " + longId);
+    RamCloudVertex newVertex = new RamCloudVertex(longId, this);
     
     LOGGER.log(Level.FINER, "Writing blank entry to the vertex table");
     ramCloudClient.write(vertTableId, newVertex.getRcKey(), ByteBuffer.allocate(0).array());
@@ -104,7 +154,22 @@ public class RamCloudGraph implements Graph {
 
   @Override
   public Vertex getVertex(Object id) {
-    LOGGER.log(Level.FINE, "Getting vertex with id: " + (Long)id);
+    Long longId;
+    
+    if(id instanceof Long) {
+      longId = (Long)id;
+    } else if(id instanceof Integer) {
+      longId = ((Integer) id).longValue();
+    } else if(id instanceof String) {
+      longId = Long.parseLong((String) id, 10);
+    } else if(id instanceof byte[]) {
+      longId = ByteBuffer.wrap((byte[]) id).getLong();
+    } else {
+      LOGGER.log(Level.WARNING, "id argument " + id.toString() + " of type " + id.getClass() + " is not supported. Returning null.");
+      return null;
+    }
+    
+    LOGGER.log(Level.FINE, "Getting vertex with id: " + longId);
     /*
      * Logical steps:
      *  - Create RamCloudVertex object
@@ -113,14 +178,14 @@ public class RamCloudGraph implements Graph {
      *   - If no then return null
      */
     
-    RamCloudVertex vertex = new RamCloudVertex((Long)id, this);
+    RamCloudVertex vertex = new RamCloudVertex(longId, this);
     
     try {
       ramCloudClient.read(vertTableId, vertex.getRcKey());
-      LOGGER.log(Level.FINER, "Found vertex " + (Long)id + " in RAMCloud memory");
+      LOGGER.log(Level.FINER, "Found vertex " + longId + " in RAMCloud memory");
       return vertex;
     } catch(Exception e) {
-      LOGGER.log(Level.FINER, "Did not find vertex " + (Long)id + " in RAMCloud memory");
+      LOGGER.log(Level.FINER, "Did not find vertex " + longId + " in RAMCloud memory");
       return null;
     }
   }
@@ -168,6 +233,11 @@ public class RamCloudGraph implements Graph {
 
   @Override
   public Iterable<Vertex> getVertices(String key, Object value) {
+    if(!(value instanceof String)) {
+      LOGGER.log(Level.WARNING, "value argument " + value.toString() + " of type " + value.getClass() + " is not supported. Returning null.");
+      return null;
+    }
+    
     LOGGER.log(Level.FINE, "Getting all the vertices in the graph with (key="+key+",value="+value+")...");
     JRamCloud.TableEnumerator tableEnum = ramCloudClient.new TableEnumerator(vertPropTableId);
     
@@ -248,13 +318,23 @@ public class RamCloudGraph implements Graph {
 
   @Override
   public Edge getEdge(Object id) {
+    byte[] bytearrayId;
+    
+    if(id instanceof byte[]) {
+      bytearrayId = (byte[]) id;
+    } else if(id instanceof String) {
+      bytearrayId = Base64.decode(((String) id));
+    } else {
+      LOGGER.log(Level.WARNING, "id argument " + id.toString() + " of type " + id.getClass() + " is not supported. Returning null.");
+      return null;
+    }
     /* TODO
      *  - I'm assuming right now that the edge actually exists... but we
      *  might want to do a check for that and return null or throw an 
      *  exception in the case that the edge actually doesn't exist in 
      *  RAMCloud.
      */
-    RamCloudEdge edge = new RamCloudEdge((byte[])id, this);
+    RamCloudEdge edge = new RamCloudEdge(bytearrayId, this);
     
     LOGGER.log(Level.FINE, "Getting edge: " + (Long)edge.getVertex(Direction.OUT).getId() + "->" + (Long)edge.getVertex(Direction.IN).getId() + ":" + edge.getLabel());
     
@@ -353,6 +433,11 @@ public class RamCloudGraph implements Graph {
 
   @Override
   public Iterable<Edge> getEdges(String key, Object value) {
+    if(!(value instanceof String)) {
+      LOGGER.log(Level.WARNING, "value argument " + value.toString() + " of type " + value.getClass() + " is not supported. Returning null.");
+      return null;
+    }
+    
     LOGGER.log(Level.FINE, "Getting all the vertices in the graph with (key="+key+",value="+value+")...");
     JRamCloud.TableEnumerator tableEnum = ramCloudClient.new TableEnumerator(edgePropTableId);
     
@@ -547,6 +632,10 @@ public class RamCloudGraph implements Graph {
   }
 
   public void setProperty(Element element, String key, Object value) {
+    if(!(value instanceof String)) {
+      LOGGER.log(Level.WARNING, "value argument " + value.toString() + " of type " + value.getClass() + " is not supported. Can't set this property.");
+      return;
+    }
     /* TODO
      *  - Robustify this function to handle elements that do not exist
      */
@@ -610,15 +699,17 @@ public class RamCloudGraph implements Graph {
   
   @Override
   public GraphQuery query() {
-    LOGGER.log(Level.FINE, "Calling GraphQuery() (NOT IMPLEMENTED)");
-    // TODO Auto-generated method stub
-    return null;
+    LOGGER.log(Level.FINE, "Getting graph query object");
+    return new DefaultGraphQuery(this);
   }
 
   @Override
   public void shutdown() {
-    LOGGER.log(Level.FINE, "Calling shutdown() (NOT IMPLEMENTED)");
-    // TODO Auto-generated method stub
+    LOGGER.log(Level.FINE, "Shutting down...");
+  }
+  
+  public String toString() {
+    return new String("RamCloudGraph says, \"Top o' the mornin' to ya!\"");
   }
   
   public static void main(String[] args) {
@@ -631,32 +722,43 @@ public class RamCloudGraph implements Graph {
     Vertex kyle = rcgraph.addVertex((long)5);
     Vertex eddie = rcgraph.addVertex((long)6);
     
-    rcgraph.addEdge(null, chenchen, kate, "wife");
-    rcgraph.addEdge(null, kate, chenchen, "husband");
-    Edge edge0 = rcgraph.addEdge(null, jonathan, sophia, "girlfriend");
-    Edge edge1 = rcgraph.addEdge(null, sophia, jonathan, "boyfriend");
-    Edge edge2 = rcgraph.addEdge(null, sophia, chenchen, "friend");
-    Edge edge3 = rcgraph.addEdge(null, sophia, kate, "friend");
-    Edge edge4 = rcgraph.addEdge(null, jonathan, kyle, "bro");
-    rcgraph.addEdge(null, kyle, eddie, "pet");
-    rcgraph.addEdge(null, eddie, kyle, "master");
+    Edge edge0 = rcgraph.addEdge(null, chenchen, kate, "wife");
+    Edge edge1 = rcgraph.addEdge(null, kate, chenchen, "husband");
+    Edge edge2 = rcgraph.addEdge(null, jonathan, sophia, "girlfriend");
+    Edge edge3 = rcgraph.addEdge(null, sophia, jonathan, "boyfriend");
+    Edge edge4 = rcgraph.addEdge(null, sophia, chenchen, "friend");
+    Edge edge5 = rcgraph.addEdge(null, sophia, kate, "friend");
+    Edge edge6 = rcgraph.addEdge(null, jonathan, kyle, "bro");
+    Edge edge7 = rcgraph.addEdge(null, kyle, eddie, "pet");
+    Edge edge8 = rcgraph.addEdge(null, eddie, kyle, "master");
     
+    chenchen.setProperty("name",  "chen chen");
+    chenchen.setProperty("driving style", "crazy man");
+    kate.setProperty("name", "kate");
+    kate.setProperty("favorite country", "sweden");
+    sophia.setProperty("name", "sophia");
+    sophia.setProperty("special skill", "photography");
+    jonathan.setProperty("name", "jonathan");
+    jonathan.setProperty("hobby", "eating");
+    kyle.setProperty("name", "kyle");
+    kyle.setProperty("favorite dish", "anything eggplant");
+    eddie.setProperty("name", "eddie");
+    eddie.setProperty("gotcha day", "July 13th, 2012");
+    
+    edge0.setProperty("wedding", "June 10th, 2014");
+    edge2.setProperty("firstdate", "March 29th, 2013");
+    edge2.setProperty("common intrests", "watching silly youtube videos, hiking, eating");
+    edge6.setProperty("common intrests", "coffee");
+    
+    /*
     Iterator<Edge> edges = rcgraph.getEdges((RamCloudVertex)jonathan, Direction.BOTH).iterator();
     while(edges.hasNext()) {
       RamCloudEdge edge = (RamCloudEdge)edges.next();
       System.out.println(edge.toString());
     }
-    
-    jonathan.setProperty("name", "jonathan");
-    jonathan.setProperty("age", 27);
-    System.out.println(jonathan.getProperty("name"));
-    System.out.println(jonathan.getProperty("age"));
-    
-    edge0.setProperty("firstdate", "20130329");
+    */
     
     /*
-    rcgraph.removeVertex(kyle);
-    
     edges = rcgraph.getEdges((RamCloudVertex)jonathan, Direction.BOTH).iterator();
     while(edges.hasNext()) {
       RamCloudEdge edge = (RamCloudEdge)edges.next();
@@ -664,6 +766,7 @@ public class RamCloudGraph implements Graph {
     }
     */
     
+    /*
     edges = rcgraph.getEdges().iterator();
     while(edges.hasNext()) {
       RamCloudEdge edge = (RamCloudEdge)edges.next();
@@ -681,5 +784,6 @@ public class RamCloudGraph implements Graph {
       RamCloudEdge edge = (RamCloudEdge)edges.next();
       System.out.println(edge.toString());
     }
+    */
   }
 }

@@ -5,10 +5,17 @@ import java.util.Set;
 import java.util.Iterator;
 import java.util.ArrayList;
 
+import java.util.logging.Handler;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.VertexQuery;
+
+import com.tinkerpop.blueprints.util.DefaultVertexQuery;
 
 public class RamCloudVertex implements Vertex {
 
@@ -16,18 +23,20 @@ public class RamCloudVertex implements Vertex {
   private RamCloudGraph graph;
   private byte[] rcKey;
   
+  private static Logger LOGGER = Logger.getLogger(RamCloudGraph.class.getName());
+  
+  public RamCloudVertex(byte[] rcKey, RamCloudGraph graph) {
+    this.rcKey = rcKey;
+    this.graph = graph;
+
+    this.id = ByteBuffer.wrap(rcKey).getLong();
+  }
+  
   public RamCloudVertex(long id, RamCloudGraph graph) {
     this.id = id;
     this.graph = graph;
     
     this.rcKey = ByteBuffer.allocate(8).putLong(this.id).array();
-  }
-  
-  public RamCloudVertex(byte[] rcKey, RamCloudGraph graph) {
-    this.id = ByteBuffer.wrap(rcKey).getLong();
-    this.graph = graph;
-    
-    this.rcKey = rcKey;
   }
 
   @Override
@@ -57,10 +66,12 @@ public class RamCloudVertex implements Vertex {
 
   @Override
   public Object getId() {
-    return id;
+    LOGGER.log(Level.FINE, "Getting id of vertex " + id);
+    return (Object)id;
   }
   
   public byte[] getRcKey() {
+    LOGGER.log(Level.FINE, "Getting rcKey of vertex " + id);
     return rcKey;
   }
   
@@ -71,6 +82,7 @@ public class RamCloudVertex implements Vertex {
 
   @Override
   public Iterable<Vertex> getVertices(Direction direction, String... labels) {
+    LOGGER.log(Level.FINE, "Getting neighbor vertices of vertex " + id + " in direction " + direction.toString());
     Iterator<Edge> edges = getEdges(direction, labels).iterator();
     
     ArrayList<Vertex> vertexArray = new ArrayList<Vertex>();
@@ -91,8 +103,7 @@ public class RamCloudVertex implements Vertex {
 
   @Override
   public VertexQuery query() {
-    // TODO Auto-generated method stub
-    return null;
+    return new DefaultVertexQuery(this);
   }
 
   @Override
@@ -101,6 +112,6 @@ public class RamCloudVertex implements Vertex {
   }
   
   public String toString() {
-    return new String(id + ":" + rcKey);
+    return new String("Vertex " + id);
   }
 }

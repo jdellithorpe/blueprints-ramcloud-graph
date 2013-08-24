@@ -10,7 +10,7 @@ import java.util.logging.Level;
 public class RamCloudGraphConfiguration implements GraphConfiguration {
 
     public Graph configureGraphInstance(final Configuration properties) throws GraphConfigurationException {
-        return new RamCloudGraph("infrc:host=192.168.1.101,port=12246", Level.FINER);
+        return new RamCloudGraph("infrc:host=192.168.1.101,port=12246", Level.FINE);
     }
 
 }
