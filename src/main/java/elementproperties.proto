@@ -1,0 +1,20 @@
+package RamCloudGraph;
+
+option java_package = "com.tinkerpop.blueprints.impls.ramcloud";
+option java_outer_classname = "ElementPropertyProtos";
+
+message PropertyList {
+  repeated Property property = 1;
+}
+
+message Property {
+  enum Type { STRING = 1; INT64 = 2; DOUBLE = 3; FLOAT = 4; BOOL = 5; }
+
+  required Type type = 1;
+
+  optional string string = 2;
+  optional int64 int64 = 3;
+  optional double double = 4;
+  optional float float = 5;
+  optional bool bool = 6;
+} 
