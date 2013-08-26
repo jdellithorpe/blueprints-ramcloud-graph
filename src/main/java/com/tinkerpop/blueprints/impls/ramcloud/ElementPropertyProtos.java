@@ -574,29 +574,33 @@ public final class ElementPropertyProtos {
   public interface PropertyOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
     
-    // required .RamCloudGraph.Property.Type type = 1;
-    boolean hasType();
-    com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type getType();
+    // required string key = 1;
+    boolean hasKey();
+    String getKey();
     
-    // optional string string = 2;
-    boolean hasString();
-    String getString();
+    // required .RamCloudGraph.Property.Type value_type = 2;
+    boolean hasValueType();
+    com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type getValueType();
     
-    // optional int64 int64 = 3;
-    boolean hasInt64();
-    long getInt64();
+    // optional string string_value = 3;
+    boolean hasStringValue();
+    String getStringValue();
     
-    // optional double double = 4;
-    boolean hasDouble();
-    double getDouble();
+    // optional int64 int64_value = 4;
+    boolean hasInt64Value();
+    long getInt64Value();
     
-    // optional float float = 5;
-    boolean hasFloat();
-    float getFloat();
+    // optional double double_value = 5;
+    boolean hasDoubleValue();
+    double getDoubleValue();
     
-    // optional bool bool = 6;
-    boolean hasBool();
-    boolean getBool();
+    // optional float float_value = 6;
+    boolean hasFloatValue();
+    float getFloatValue();
+    
+    // optional bool bool_value = 7;
+    boolean hasBoolValue();
+    boolean getBoolValue();
   }
   public static final class Property extends
       com.google.protobuf.GeneratedMessage
@@ -705,24 +709,14 @@ public final class ElementPropertyProtos {
     }
     
     private int bitField0_;
-    // required .RamCloudGraph.Property.Type type = 1;
-    public static final int TYPE_FIELD_NUMBER = 1;
-    private com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type type_;
-    public boolean hasType() {
+    // required string key = 1;
+    public static final int KEY_FIELD_NUMBER = 1;
+    private java.lang.Object key_;
+    public boolean hasKey() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
-    public com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type getType() {
-      return type_;
-    }
-    
-    // optional string string = 2;
-    public static final int STRING_FIELD_NUMBER = 2;
-    private java.lang.Object string_;
-    public boolean hasString() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    public String getString() {
-      java.lang.Object ref = string_;
+    public String getKey() {
+      java.lang.Object ref = key_;
       if (ref instanceof String) {
         return (String) ref;
       } else {
@@ -730,77 +724,124 @@ public final class ElementPropertyProtos {
             (com.google.protobuf.ByteString) ref;
         String s = bs.toStringUtf8();
         if (com.google.protobuf.Internal.isValidUtf8(bs)) {
-          string_ = s;
+          key_ = s;
         }
         return s;
       }
     }
-    private com.google.protobuf.ByteString getStringBytes() {
-      java.lang.Object ref = string_;
+    private com.google.protobuf.ByteString getKeyBytes() {
+      java.lang.Object ref = key_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8((String) ref);
-        string_ = b;
+        key_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     
-    // optional int64 int64 = 3;
-    public static final int INT64_FIELD_NUMBER = 3;
-    private long int64_;
-    public boolean hasInt64() {
+    // required .RamCloudGraph.Property.Type value_type = 2;
+    public static final int VALUE_TYPE_FIELD_NUMBER = 2;
+    private com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type valueType_;
+    public boolean hasValueType() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    public com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type getValueType() {
+      return valueType_;
+    }
+    
+    // optional string string_value = 3;
+    public static final int STRING_VALUE_FIELD_NUMBER = 3;
+    private java.lang.Object stringValue_;
+    public boolean hasStringValue() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
-    public long getInt64() {
-      return int64_;
+    public String getStringValue() {
+      java.lang.Object ref = stringValue_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+          stringValue_ = s;
+        }
+        return s;
+      }
+    }
+    private com.google.protobuf.ByteString getStringValueBytes() {
+      java.lang.Object ref = stringValue_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+        stringValue_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
     
-    // optional double double = 4;
-    public static final int DOUBLE_FIELD_NUMBER = 4;
-    private double double_;
-    public boolean hasDouble() {
+    // optional int64 int64_value = 4;
+    public static final int INT64_VALUE_FIELD_NUMBER = 4;
+    private long int64Value_;
+    public boolean hasInt64Value() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
-    public double getDouble() {
-      return double_;
+    public long getInt64Value() {
+      return int64Value_;
     }
     
-    // optional float float = 5;
-    public static final int FLOAT_FIELD_NUMBER = 5;
-    private float float_;
-    public boolean hasFloat() {
+    // optional double double_value = 5;
+    public static final int DOUBLE_VALUE_FIELD_NUMBER = 5;
+    private double doubleValue_;
+    public boolean hasDoubleValue() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
-    public float getFloat() {
-      return float_;
+    public double getDoubleValue() {
+      return doubleValue_;
     }
     
-    // optional bool bool = 6;
-    public static final int BOOL_FIELD_NUMBER = 6;
-    private boolean bool_;
-    public boolean hasBool() {
+    // optional float float_value = 6;
+    public static final int FLOAT_VALUE_FIELD_NUMBER = 6;
+    private float floatValue_;
+    public boolean hasFloatValue() {
       return ((bitField0_ & 0x00000020) == 0x00000020);
     }
-    public boolean getBool() {
-      return bool_;
+    public float getFloatValue() {
+      return floatValue_;
+    }
+    
+    // optional bool bool_value = 7;
+    public static final int BOOL_VALUE_FIELD_NUMBER = 7;
+    private boolean boolValue_;
+    public boolean hasBoolValue() {
+      return ((bitField0_ & 0x00000040) == 0x00000040);
+    }
+    public boolean getBoolValue() {
+      return boolValue_;
     }
     
     private void initFields() {
-      type_ = com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type.STRING;
-      string_ = "";
-      int64_ = 0L;
-      double_ = 0D;
-      float_ = 0F;
-      bool_ = false;
+      key_ = "";
+      valueType_ = com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type.STRING;
+      stringValue_ = "";
+      int64Value_ = 0L;
+      doubleValue_ = 0D;
+      floatValue_ = 0F;
+      boolValue_ = false;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
       
-      if (!hasType()) {
+      if (!hasKey()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasValueType()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -812,22 +853,25 @@ public final class ElementPropertyProtos {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeEnum(1, type_.getNumber());
+        output.writeBytes(1, getKeyBytes());
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getStringBytes());
+        output.writeEnum(2, valueType_.getNumber());
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeInt64(3, int64_);
+        output.writeBytes(3, getStringValueBytes());
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeDouble(4, double_);
+        output.writeInt64(4, int64Value_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        output.writeFloat(5, float_);
+        output.writeDouble(5, doubleValue_);
       }
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
-        output.writeBool(6, bool_);
+        output.writeFloat(6, floatValue_);
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        output.writeBool(7, boolValue_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -840,27 +884,31 @@ public final class ElementPropertyProtos {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(1, type_.getNumber());
+          .computeBytesSize(1, getKeyBytes());
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, getStringBytes());
+          .computeEnumSize(2, valueType_.getNumber());
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(3, int64_);
+          .computeBytesSize(3, getStringValueBytes());
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(4, double_);
+          .computeInt64Size(4, int64Value_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeFloatSize(5, float_);
+          .computeDoubleSize(5, doubleValue_);
       }
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(6, bool_);
+          .computeFloatSize(6, floatValue_);
+      }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(7, boolValue_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -986,18 +1034,20 @@ public final class ElementPropertyProtos {
       
       public Builder clear() {
         super.clear();
-        type_ = com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type.STRING;
+        key_ = "";
         bitField0_ = (bitField0_ & ~0x00000001);
-        string_ = "";
+        valueType_ = com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type.STRING;
         bitField0_ = (bitField0_ & ~0x00000002);
-        int64_ = 0L;
+        stringValue_ = "";
         bitField0_ = (bitField0_ & ~0x00000004);
-        double_ = 0D;
+        int64Value_ = 0L;
         bitField0_ = (bitField0_ & ~0x00000008);
-        float_ = 0F;
+        doubleValue_ = 0D;
         bitField0_ = (bitField0_ & ~0x00000010);
-        bool_ = false;
+        floatValue_ = 0F;
         bitField0_ = (bitField0_ & ~0x00000020);
+        boolValue_ = false;
+        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
       
@@ -1039,27 +1089,31 @@ public final class ElementPropertyProtos {
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
           to_bitField0_ |= 0x00000001;
         }
-        result.type_ = type_;
+        result.key_ = key_;
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
         }
-        result.string_ = string_;
+        result.valueType_ = valueType_;
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
-        result.int64_ = int64_;
+        result.stringValue_ = stringValue_;
         if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
           to_bitField0_ |= 0x00000008;
         }
-        result.double_ = double_;
+        result.int64Value_ = int64Value_;
         if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
           to_bitField0_ |= 0x00000010;
         }
-        result.float_ = float_;
+        result.doubleValue_ = doubleValue_;
         if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
           to_bitField0_ |= 0x00000020;
         }
-        result.bool_ = bool_;
+        result.floatValue_ = floatValue_;
+        if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+          to_bitField0_ |= 0x00000040;
+        }
+        result.boolValue_ = boolValue_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -1076,30 +1130,37 @@ public final class ElementPropertyProtos {
       
       public Builder mergeFrom(com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property other) {
         if (other == com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.getDefaultInstance()) return this;
-        if (other.hasType()) {
-          setType(other.getType());
+        if (other.hasKey()) {
+          setKey(other.getKey());
         }
-        if (other.hasString()) {
-          setString(other.getString());
+        if (other.hasValueType()) {
+          setValueType(other.getValueType());
         }
-        if (other.hasInt64()) {
-          setInt64(other.getInt64());
+        if (other.hasStringValue()) {
+          setStringValue(other.getStringValue());
         }
-        if (other.hasDouble()) {
-          setDouble(other.getDouble());
+        if (other.hasInt64Value()) {
+          setInt64Value(other.getInt64Value());
         }
-        if (other.hasFloat()) {
-          setFloat(other.getFloat());
+        if (other.hasDoubleValue()) {
+          setDoubleValue(other.getDoubleValue());
         }
-        if (other.hasBool()) {
-          setBool(other.getBool());
+        if (other.hasFloatValue()) {
+          setFloatValue(other.getFloatValue());
+        }
+        if (other.hasBoolValue()) {
+          setBoolValue(other.getBoolValue());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
       
       public final boolean isInitialized() {
-        if (!hasType()) {
+        if (!hasKey()) {
+          
+          return false;
+        }
+        if (!hasValueType()) {
           
           return false;
         }
@@ -1129,40 +1190,45 @@ public final class ElementPropertyProtos {
               }
               break;
             }
-            case 8: {
+            case 10: {
+              bitField0_ |= 0x00000001;
+              key_ = input.readBytes();
+              break;
+            }
+            case 16: {
               int rawValue = input.readEnum();
               com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type value = com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type.valueOf(rawValue);
               if (value == null) {
-                unknownFields.mergeVarintField(1, rawValue);
+                unknownFields.mergeVarintField(2, rawValue);
               } else {
-                bitField0_ |= 0x00000001;
-                type_ = value;
+                bitField0_ |= 0x00000002;
+                valueType_ = value;
               }
               break;
             }
-            case 18: {
-              bitField0_ |= 0x00000002;
-              string_ = input.readBytes();
-              break;
-            }
-            case 24: {
+            case 26: {
               bitField0_ |= 0x00000004;
-              int64_ = input.readInt64();
+              stringValue_ = input.readBytes();
               break;
             }
-            case 33: {
+            case 32: {
               bitField0_ |= 0x00000008;
-              double_ = input.readDouble();
+              int64Value_ = input.readInt64();
               break;
             }
-            case 45: {
+            case 41: {
               bitField0_ |= 0x00000010;
-              float_ = input.readFloat();
+              doubleValue_ = input.readDouble();
               break;
             }
-            case 48: {
+            case 53: {
               bitField0_ |= 0x00000020;
-              bool_ = input.readBool();
+              floatValue_ = input.readFloat();
+              break;
+            }
+            case 56: {
+              bitField0_ |= 0x00000040;
+              boolValue_ = input.readBool();
               break;
             }
           }
@@ -1171,146 +1237,182 @@ public final class ElementPropertyProtos {
       
       private int bitField0_;
       
-      // required .RamCloudGraph.Property.Type type = 1;
-      private com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type type_ = com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type.STRING;
-      public boolean hasType() {
+      // required string key = 1;
+      private java.lang.Object key_ = "";
+      public boolean hasKey() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
-      public com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type getType() {
-        return type_;
-      }
-      public Builder setType(com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        bitField0_ |= 0x00000001;
-        type_ = value;
-        onChanged();
-        return this;
-      }
-      public Builder clearType() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        type_ = com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type.STRING;
-        onChanged();
-        return this;
-      }
-      
-      // optional string string = 2;
-      private java.lang.Object string_ = "";
-      public boolean hasString() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      public String getString() {
-        java.lang.Object ref = string_;
+      public String getKey() {
+        java.lang.Object ref = key_;
         if (!(ref instanceof String)) {
           String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
-          string_ = s;
+          key_ = s;
           return s;
         } else {
           return (String) ref;
         }
       }
-      public Builder setString(String value) {
+      public Builder setKey(String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
-        string_ = value;
+  bitField0_ |= 0x00000001;
+        key_ = value;
         onChanged();
         return this;
       }
-      public Builder clearString() {
-        bitField0_ = (bitField0_ & ~0x00000002);
-        string_ = getDefaultInstance().getString();
+      public Builder clearKey() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        key_ = getDefaultInstance().getKey();
         onChanged();
         return this;
       }
-      void setString(com.google.protobuf.ByteString value) {
-        bitField0_ |= 0x00000002;
-        string_ = value;
+      void setKey(com.google.protobuf.ByteString value) {
+        bitField0_ |= 0x00000001;
+        key_ = value;
         onChanged();
       }
       
-      // optional int64 int64 = 3;
-      private long int64_ ;
-      public boolean hasInt64() {
+      // required .RamCloudGraph.Property.Type value_type = 2;
+      private com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type valueType_ = com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type.STRING;
+      public boolean hasValueType() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      public com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type getValueType() {
+        return valueType_;
+      }
+      public Builder setValueType(com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000002;
+        valueType_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearValueType() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        valueType_ = com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type.STRING;
+        onChanged();
+        return this;
+      }
+      
+      // optional string string_value = 3;
+      private java.lang.Object stringValue_ = "";
+      public boolean hasStringValue() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
-      public long getInt64() {
-        return int64_;
+      public String getStringValue() {
+        java.lang.Object ref = stringValue_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+          stringValue_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
       }
-      public Builder setInt64(long value) {
-        bitField0_ |= 0x00000004;
-        int64_ = value;
+      public Builder setStringValue(String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000004;
+        stringValue_ = value;
         onChanged();
         return this;
       }
-      public Builder clearInt64() {
+      public Builder clearStringValue() {
         bitField0_ = (bitField0_ & ~0x00000004);
-        int64_ = 0L;
+        stringValue_ = getDefaultInstance().getStringValue();
         onChanged();
         return this;
+      }
+      void setStringValue(com.google.protobuf.ByteString value) {
+        bitField0_ |= 0x00000004;
+        stringValue_ = value;
+        onChanged();
       }
       
-      // optional double double = 4;
-      private double double_ ;
-      public boolean hasDouble() {
+      // optional int64 int64_value = 4;
+      private long int64Value_ ;
+      public boolean hasInt64Value() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
-      public double getDouble() {
-        return double_;
+      public long getInt64Value() {
+        return int64Value_;
       }
-      public Builder setDouble(double value) {
+      public Builder setInt64Value(long value) {
         bitField0_ |= 0x00000008;
-        double_ = value;
+        int64Value_ = value;
         onChanged();
         return this;
       }
-      public Builder clearDouble() {
+      public Builder clearInt64Value() {
         bitField0_ = (bitField0_ & ~0x00000008);
-        double_ = 0D;
+        int64Value_ = 0L;
         onChanged();
         return this;
       }
       
-      // optional float float = 5;
-      private float float_ ;
-      public boolean hasFloat() {
+      // optional double double_value = 5;
+      private double doubleValue_ ;
+      public boolean hasDoubleValue() {
         return ((bitField0_ & 0x00000010) == 0x00000010);
       }
-      public float getFloat() {
-        return float_;
+      public double getDoubleValue() {
+        return doubleValue_;
       }
-      public Builder setFloat(float value) {
+      public Builder setDoubleValue(double value) {
         bitField0_ |= 0x00000010;
-        float_ = value;
+        doubleValue_ = value;
         onChanged();
         return this;
       }
-      public Builder clearFloat() {
+      public Builder clearDoubleValue() {
         bitField0_ = (bitField0_ & ~0x00000010);
-        float_ = 0F;
+        doubleValue_ = 0D;
         onChanged();
         return this;
       }
       
-      // optional bool bool = 6;
-      private boolean bool_ ;
-      public boolean hasBool() {
+      // optional float float_value = 6;
+      private float floatValue_ ;
+      public boolean hasFloatValue() {
         return ((bitField0_ & 0x00000020) == 0x00000020);
       }
-      public boolean getBool() {
-        return bool_;
+      public float getFloatValue() {
+        return floatValue_;
       }
-      public Builder setBool(boolean value) {
+      public Builder setFloatValue(float value) {
         bitField0_ |= 0x00000020;
-        bool_ = value;
+        floatValue_ = value;
         onChanged();
         return this;
       }
-      public Builder clearBool() {
+      public Builder clearFloatValue() {
         bitField0_ = (bitField0_ & ~0x00000020);
-        bool_ = false;
+        floatValue_ = 0F;
+        onChanged();
+        return this;
+      }
+      
+      // optional bool bool_value = 7;
+      private boolean boolValue_ ;
+      public boolean hasBoolValue() {
+        return ((bitField0_ & 0x00000040) == 0x00000040);
+      }
+      public boolean getBoolValue() {
+        return boolValue_;
+      }
+      public Builder setBoolValue(boolean value) {
+        bitField0_ |= 0x00000040;
+        boolValue_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearBoolValue() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        boolValue_ = false;
         onChanged();
         return this;
       }
@@ -1347,14 +1449,15 @@ public final class ElementPropertyProtos {
     java.lang.String[] descriptorData = {
       "\n\027elementproperties.proto\022\rRamCloudGraph" +
       "\"9\n\014PropertyList\022)\n\010property\030\001 \003(\0132\027.Ram" +
-      "CloudGraph.Property\"\302\001\n\010Property\022*\n\004type" +
-      "\030\001 \002(\0162\034.RamCloudGraph.Property.Type\022\016\n\006" +
-      "string\030\002 \001(\t\022\r\n\005int64\030\003 \001(\003\022\016\n\006double\030\004 " +
-      "\001(\001\022\r\n\005float\030\005 \001(\002\022\014\n\004bool\030\006 \001(\010\">\n\004Type" +
-      "\022\n\n\006STRING\020\001\022\t\n\005INT64\020\002\022\n\n\006DOUBLE\020\003\022\t\n\005F" +
-      "LOAT\020\004\022\010\n\004BOOL\020\005B@\n\'com.tinkerpop.bluepr" +
-      "ints.impls.ramcloudB\025ElementPropertyProt" +
-      "os"
+      "CloudGraph.Property\"\363\001\n\010Property\022\013\n\003key\030" +
+      "\001 \002(\t\0220\n\nvalue_type\030\002 \002(\0162\034.RamCloudGrap" +
+      "h.Property.Type\022\024\n\014string_value\030\003 \001(\t\022\023\n" +
+      "\013int64_value\030\004 \001(\003\022\024\n\014double_value\030\005 \001(\001" +
+      "\022\023\n\013float_value\030\006 \001(\002\022\022\n\nbool_value\030\007 \001(" +
+      "\010\">\n\004Type\022\n\n\006STRING\020\001\022\t\n\005INT64\020\002\022\n\n\006DOUB" +
+      "LE\020\003\022\t\n\005FLOAT\020\004\022\010\n\004BOOL\020\005B@\n\'com.tinkerp" +
+      "op.blueprints.impls.ramcloudB\025ElementPro",
+      "pertyProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1374,7 +1477,7 @@ public final class ElementPropertyProtos {
           internal_static_RamCloudGraph_Property_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_RamCloudGraph_Property_descriptor,
-              new java.lang.String[] { "Type", "String", "Int64", "Double", "Float", "Bool", },
+              new java.lang.String[] { "Key", "ValueType", "StringValue", "Int64Value", "DoubleValue", "FloatValue", "BoolValue", },
               com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.class,
               com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Builder.class);
           return null;

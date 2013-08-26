@@ -10,11 +10,13 @@ message PropertyList {
 message Property {
   enum Type { STRING = 1; INT64 = 2; DOUBLE = 3; FLOAT = 4; BOOL = 5; }
 
-  required Type type = 1;
+  required string key = 1;
+  
+  required Type value_type = 2;
 
-  optional string string = 2;
-  optional int64 int64 = 3;
-  optional double double = 4;
-  optional float float = 5;
-  optional bool bool = 6;
+  optional string string_value = 3;
+  optional int64 int64_value = 4;
+  optional double double_value = 5;
+  optional float float_value = 6;
+  optional bool bool_value = 7;
 } 
