@@ -15,6 +15,8 @@ import com.tinkerpop.blueprints.util.io.gml.GMLReaderTestSuite;
 import com.tinkerpop.blueprints.util.io.graphml.GraphMLReaderTestSuite;
 import com.tinkerpop.blueprints.util.io.graphson.GraphSONReaderTestSuite;
 
+import java.util.logging.Level;
+
 public class RamCloudGraphTest extends GraphTest {
 
   public RamCloudGraphTest() {
@@ -26,49 +28,53 @@ public class RamCloudGraphTest extends GraphTest {
     doTestSuite(new VertexTestSuite(this));
     printTestPerformance("VertexTestSuite", this.stopWatch());
   }
-
+  
   public void testEdgeTestSuite() throws Exception {
     this.stopWatch();
     doTestSuite(new EdgeTestSuite(this));
     printTestPerformance("EdgeTestSuite", this.stopWatch());
   }
-
+  
   public void testGraphTestSuite() throws Exception {
     this.stopWatch();
     doTestSuite(new GraphTestSuite(this));
     printTestPerformance("GraphTestSuite", this.stopWatch());
   }
-
+  
+  /*
   public void testKeyIndexableGraphTestSuite() throws Exception {
     this.stopWatch();
     doTestSuite(new KeyIndexableGraphTestSuite(this));
     printTestPerformance("KeyIndexableGraphTestSuite", this.stopWatch());
   }
-
+  
+  
   public void testIndexableGraphTestSuite() throws Exception {
     this.stopWatch();
     doTestSuite(new IndexableGraphTestSuite(this));
     printTestPerformance("IndexableGraphTestSuite", this.stopWatch());
   }
-
+  
+  
   public void testIndexTestSuite() throws Exception {
     this.stopWatch();
     doTestSuite(new IndexTestSuite(this));
     printTestPerformance("IndexTestSuite", this.stopWatch());
   }
-
+  */
+  
   public void testGraphMLReaderTestSuite() throws Exception {
     this.stopWatch();
     doTestSuite(new GraphMLReaderTestSuite(this));
     printTestPerformance("GraphMLReaderTestSuite", this.stopWatch());
   }
-
+  
   public void testGMLReaderTestSuite() throws Exception {
     this.stopWatch();
     doTestSuite(new GMLReaderTestSuite(this));
     printTestPerformance("GMLReaderTestSuite", this.stopWatch());
   }
-
+  
   public void testGraphSONReaderTestSuite() throws Exception {
     this.stopWatch();
     doTestSuite(new GraphSONReaderTestSuite(this));
@@ -87,7 +93,7 @@ public class RamCloudGraphTest extends GraphTest {
 
   @Override
   public Graph generateGraph() {
-    return new RamCloudGraph("infrc:host=192.168.1.101,port=12246");
+    return new RamCloudGraph("infrc:host=192.168.1.101,port=12246", Level.INFO);
   }
 
   @Override

@@ -1,10 +1,10 @@
 package com.tinkerpop.blueprints.impls.ramcloud;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.ArrayList;
-
 import java.util.logging.Handler;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -14,7 +14,6 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.VertexQuery;
-
 import com.tinkerpop.blueprints.util.DefaultVertexQuery;
 
 public class RamCloudVertex implements Vertex {
@@ -40,23 +39,53 @@ public class RamCloudVertex implements Vertex {
   }
 
   @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + Arrays.hashCode(rcKey);
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    RamCloudVertex other = (RamCloudVertex) obj;
+    if (!Arrays.equals(rcKey, other.rcKey))
+      return false;
+    return true;
+  }
+
+  @Override
   public <T> T getProperty(String key) {
-    return graph.getProperty(this, key);
+    //return graph.getProperty(this, key);
+    //return graph.getProtoBufProperty(this, key);
+    return graph.getHashMapProperty(this, key);
   }
 
   @Override
   public Set<String> getPropertyKeys() {
-    return graph.getPropertyKeys(this);
+    //return graph.getPropertyKeys(this);
+    //return graph.getProtoBufPropertyKeys(this);
+    return graph.getHashMapPropertyKeys(this);
   }
 
   @Override
   public void setProperty(String key, Object value) {
-    graph.setProperty(this, key, value);
+    //graph.setProperty(this, key, value);
+    //graph.setProtoBufProperty(this, key, value);
+    graph.setHashMapProperty(this, key, value);
   }
 
   @Override
   public <T> T removeProperty(String key) {
-    return graph.removeProperty(this, key);
+    //return graph.removeProperty(this, key);
+    //return graph.removeProtoBufProperty(this, key);
+    return graph.removeHashMapProperty(this, key);
   }
 
   @Override

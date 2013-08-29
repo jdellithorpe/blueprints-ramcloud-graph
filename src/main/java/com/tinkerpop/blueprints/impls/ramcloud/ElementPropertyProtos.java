@@ -586,19 +586,23 @@ public final class ElementPropertyProtos {
     boolean hasStringValue();
     String getStringValue();
     
-    // optional int64 int64_value = 4;
+    // optional int32 int32_value = 4;
+    boolean hasInt32Value();
+    int getInt32Value();
+    
+    // optional int64 int64_value = 5;
     boolean hasInt64Value();
     long getInt64Value();
     
-    // optional double double_value = 5;
+    // optional double double_value = 6;
     boolean hasDoubleValue();
     double getDoubleValue();
     
-    // optional float float_value = 6;
+    // optional float float_value = 7;
     boolean hasFloatValue();
     float getFloatValue();
     
-    // optional bool bool_value = 7;
+    // optional bool bool_value = 8;
     boolean hasBoolValue();
     boolean getBoolValue();
   }
@@ -633,17 +637,19 @@ public final class ElementPropertyProtos {
     public enum Type
         implements com.google.protobuf.ProtocolMessageEnum {
       STRING(0, 1),
-      INT64(1, 2),
-      DOUBLE(2, 3),
-      FLOAT(3, 4),
-      BOOL(4, 5),
+      INT32(1, 2),
+      INT64(2, 3),
+      DOUBLE(3, 4),
+      FLOAT(4, 5),
+      BOOL(5, 6),
       ;
       
       public static final int STRING_VALUE = 1;
-      public static final int INT64_VALUE = 2;
-      public static final int DOUBLE_VALUE = 3;
-      public static final int FLOAT_VALUE = 4;
-      public static final int BOOL_VALUE = 5;
+      public static final int INT32_VALUE = 2;
+      public static final int INT64_VALUE = 3;
+      public static final int DOUBLE_VALUE = 4;
+      public static final int FLOAT_VALUE = 5;
+      public static final int BOOL_VALUE = 6;
       
       
       public final int getNumber() { return value; }
@@ -651,10 +657,11 @@ public final class ElementPropertyProtos {
       public static Type valueOf(int value) {
         switch (value) {
           case 1: return STRING;
-          case 2: return INT64;
-          case 3: return DOUBLE;
-          case 4: return FLOAT;
-          case 5: return BOOL;
+          case 2: return INT32;
+          case 3: return INT64;
+          case 4: return DOUBLE;
+          case 5: return FLOAT;
+          case 6: return BOOL;
           default: return null;
         }
       }
@@ -685,7 +692,7 @@ public final class ElementPropertyProtos {
       }
       
       private static final Type[] VALUES = {
-        STRING, INT64, DOUBLE, FLOAT, BOOL, 
+        STRING, INT32, INT64, DOUBLE, FLOAT, BOOL, 
       };
       
       public static Type valueOf(
@@ -783,41 +790,51 @@ public final class ElementPropertyProtos {
       }
     }
     
-    // optional int64 int64_value = 4;
-    public static final int INT64_VALUE_FIELD_NUMBER = 4;
+    // optional int32 int32_value = 4;
+    public static final int INT32_VALUE_FIELD_NUMBER = 4;
+    private int int32Value_;
+    public boolean hasInt32Value() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    public int getInt32Value() {
+      return int32Value_;
+    }
+    
+    // optional int64 int64_value = 5;
+    public static final int INT64_VALUE_FIELD_NUMBER = 5;
     private long int64Value_;
     public boolean hasInt64Value() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
+      return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     public long getInt64Value() {
       return int64Value_;
     }
     
-    // optional double double_value = 5;
-    public static final int DOUBLE_VALUE_FIELD_NUMBER = 5;
+    // optional double double_value = 6;
+    public static final int DOUBLE_VALUE_FIELD_NUMBER = 6;
     private double doubleValue_;
     public boolean hasDoubleValue() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
+      return ((bitField0_ & 0x00000020) == 0x00000020);
     }
     public double getDoubleValue() {
       return doubleValue_;
     }
     
-    // optional float float_value = 6;
-    public static final int FLOAT_VALUE_FIELD_NUMBER = 6;
+    // optional float float_value = 7;
+    public static final int FLOAT_VALUE_FIELD_NUMBER = 7;
     private float floatValue_;
     public boolean hasFloatValue() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
+      return ((bitField0_ & 0x00000040) == 0x00000040);
     }
     public float getFloatValue() {
       return floatValue_;
     }
     
-    // optional bool bool_value = 7;
-    public static final int BOOL_VALUE_FIELD_NUMBER = 7;
+    // optional bool bool_value = 8;
+    public static final int BOOL_VALUE_FIELD_NUMBER = 8;
     private boolean boolValue_;
     public boolean hasBoolValue() {
-      return ((bitField0_ & 0x00000040) == 0x00000040);
+      return ((bitField0_ & 0x00000080) == 0x00000080);
     }
     public boolean getBoolValue() {
       return boolValue_;
@@ -827,6 +844,7 @@ public final class ElementPropertyProtos {
       key_ = "";
       valueType_ = com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Type.STRING;
       stringValue_ = "";
+      int32Value_ = 0;
       int64Value_ = 0L;
       doubleValue_ = 0D;
       floatValue_ = 0F;
@@ -862,16 +880,19 @@ public final class ElementPropertyProtos {
         output.writeBytes(3, getStringValueBytes());
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeInt64(4, int64Value_);
+        output.writeInt32(4, int32Value_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        output.writeDouble(5, doubleValue_);
+        output.writeInt64(5, int64Value_);
       }
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
-        output.writeFloat(6, floatValue_);
+        output.writeDouble(6, doubleValue_);
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        output.writeBool(7, boolValue_);
+        output.writeFloat(7, floatValue_);
+      }
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        output.writeBool(8, boolValue_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -896,19 +917,23 @@ public final class ElementPropertyProtos {
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(4, int64Value_);
+          .computeInt32Size(4, int32Value_);
       }
       if (((bitField0_ & 0x00000010) == 0x00000010)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(5, doubleValue_);
+          .computeInt64Size(5, int64Value_);
       }
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeFloatSize(6, floatValue_);
+          .computeDoubleSize(6, doubleValue_);
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(7, boolValue_);
+          .computeFloatSize(7, floatValue_);
+      }
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(8, boolValue_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1040,14 +1065,16 @@ public final class ElementPropertyProtos {
         bitField0_ = (bitField0_ & ~0x00000002);
         stringValue_ = "";
         bitField0_ = (bitField0_ & ~0x00000004);
-        int64Value_ = 0L;
+        int32Value_ = 0;
         bitField0_ = (bitField0_ & ~0x00000008);
-        doubleValue_ = 0D;
+        int64Value_ = 0L;
         bitField0_ = (bitField0_ & ~0x00000010);
-        floatValue_ = 0F;
+        doubleValue_ = 0D;
         bitField0_ = (bitField0_ & ~0x00000020);
-        boolValue_ = false;
+        floatValue_ = 0F;
         bitField0_ = (bitField0_ & ~0x00000040);
+        boolValue_ = false;
+        bitField0_ = (bitField0_ & ~0x00000080);
         return this;
       }
       
@@ -1101,17 +1128,21 @@ public final class ElementPropertyProtos {
         if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
           to_bitField0_ |= 0x00000008;
         }
-        result.int64Value_ = int64Value_;
+        result.int32Value_ = int32Value_;
         if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
           to_bitField0_ |= 0x00000010;
         }
-        result.doubleValue_ = doubleValue_;
+        result.int64Value_ = int64Value_;
         if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
           to_bitField0_ |= 0x00000020;
         }
-        result.floatValue_ = floatValue_;
+        result.doubleValue_ = doubleValue_;
         if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
           to_bitField0_ |= 0x00000040;
+        }
+        result.floatValue_ = floatValue_;
+        if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+          to_bitField0_ |= 0x00000080;
         }
         result.boolValue_ = boolValue_;
         result.bitField0_ = to_bitField0_;
@@ -1138,6 +1169,9 @@ public final class ElementPropertyProtos {
         }
         if (other.hasStringValue()) {
           setStringValue(other.getStringValue());
+        }
+        if (other.hasInt32Value()) {
+          setInt32Value(other.getInt32Value());
         }
         if (other.hasInt64Value()) {
           setInt64Value(other.getInt64Value());
@@ -1213,21 +1247,26 @@ public final class ElementPropertyProtos {
             }
             case 32: {
               bitField0_ |= 0x00000008;
+              int32Value_ = input.readInt32();
+              break;
+            }
+            case 40: {
+              bitField0_ |= 0x00000010;
               int64Value_ = input.readInt64();
               break;
             }
-            case 41: {
-              bitField0_ |= 0x00000010;
+            case 49: {
+              bitField0_ |= 0x00000020;
               doubleValue_ = input.readDouble();
               break;
             }
-            case 53: {
-              bitField0_ |= 0x00000020;
+            case 61: {
+              bitField0_ |= 0x00000040;
               floatValue_ = input.readFloat();
               break;
             }
-            case 56: {
-              bitField0_ |= 0x00000040;
+            case 64: {
+              bitField0_ |= 0x00000080;
               boolValue_ = input.readBool();
               break;
             }
@@ -1333,85 +1372,106 @@ public final class ElementPropertyProtos {
         onChanged();
       }
       
-      // optional int64 int64_value = 4;
+      // optional int32 int32_value = 4;
+      private int int32Value_ ;
+      public boolean hasInt32Value() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      public int getInt32Value() {
+        return int32Value_;
+      }
+      public Builder setInt32Value(int value) {
+        bitField0_ |= 0x00000008;
+        int32Value_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearInt32Value() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        int32Value_ = 0;
+        onChanged();
+        return this;
+      }
+      
+      // optional int64 int64_value = 5;
       private long int64Value_ ;
       public boolean hasInt64Value() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
+        return ((bitField0_ & 0x00000010) == 0x00000010);
       }
       public long getInt64Value() {
         return int64Value_;
       }
       public Builder setInt64Value(long value) {
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000010;
         int64Value_ = value;
         onChanged();
         return this;
       }
       public Builder clearInt64Value() {
-        bitField0_ = (bitField0_ & ~0x00000008);
+        bitField0_ = (bitField0_ & ~0x00000010);
         int64Value_ = 0L;
         onChanged();
         return this;
       }
       
-      // optional double double_value = 5;
+      // optional double double_value = 6;
       private double doubleValue_ ;
       public boolean hasDoubleValue() {
-        return ((bitField0_ & 0x00000010) == 0x00000010);
+        return ((bitField0_ & 0x00000020) == 0x00000020);
       }
       public double getDoubleValue() {
         return doubleValue_;
       }
       public Builder setDoubleValue(double value) {
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000020;
         doubleValue_ = value;
         onChanged();
         return this;
       }
       public Builder clearDoubleValue() {
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000020);
         doubleValue_ = 0D;
         onChanged();
         return this;
       }
       
-      // optional float float_value = 6;
+      // optional float float_value = 7;
       private float floatValue_ ;
       public boolean hasFloatValue() {
-        return ((bitField0_ & 0x00000020) == 0x00000020);
+        return ((bitField0_ & 0x00000040) == 0x00000040);
       }
       public float getFloatValue() {
         return floatValue_;
       }
       public Builder setFloatValue(float value) {
-        bitField0_ |= 0x00000020;
+        bitField0_ |= 0x00000040;
         floatValue_ = value;
         onChanged();
         return this;
       }
       public Builder clearFloatValue() {
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000040);
         floatValue_ = 0F;
         onChanged();
         return this;
       }
       
-      // optional bool bool_value = 7;
+      // optional bool bool_value = 8;
       private boolean boolValue_ ;
       public boolean hasBoolValue() {
-        return ((bitField0_ & 0x00000040) == 0x00000040);
+        return ((bitField0_ & 0x00000080) == 0x00000080);
       }
       public boolean getBoolValue() {
         return boolValue_;
       }
       public Builder setBoolValue(boolean value) {
-        bitField0_ |= 0x00000040;
+        bitField0_ |= 0x00000080;
         boolValue_ = value;
         onChanged();
         return this;
       }
       public Builder clearBoolValue() {
-        bitField0_ = (bitField0_ & ~0x00000040);
+        bitField0_ = (bitField0_ & ~0x00000080);
         boolValue_ = false;
         onChanged();
         return this;
@@ -1449,15 +1509,16 @@ public final class ElementPropertyProtos {
     java.lang.String[] descriptorData = {
       "\n\027elementproperties.proto\022\rRamCloudGraph" +
       "\"9\n\014PropertyList\022)\n\010property\030\001 \003(\0132\027.Ram" +
-      "CloudGraph.Property\"\363\001\n\010Property\022\013\n\003key\030" +
+      "CloudGraph.Property\"\223\002\n\010Property\022\013\n\003key\030" +
       "\001 \002(\t\0220\n\nvalue_type\030\002 \002(\0162\034.RamCloudGrap" +
       "h.Property.Type\022\024\n\014string_value\030\003 \001(\t\022\023\n" +
-      "\013int64_value\030\004 \001(\003\022\024\n\014double_value\030\005 \001(\001" +
-      "\022\023\n\013float_value\030\006 \001(\002\022\022\n\nbool_value\030\007 \001(" +
-      "\010\">\n\004Type\022\n\n\006STRING\020\001\022\t\n\005INT64\020\002\022\n\n\006DOUB" +
-      "LE\020\003\022\t\n\005FLOAT\020\004\022\010\n\004BOOL\020\005B@\n\'com.tinkerp" +
-      "op.blueprints.impls.ramcloudB\025ElementPro",
-      "pertyProtos"
+      "\013int32_value\030\004 \001(\005\022\023\n\013int64_value\030\005 \001(\003\022" +
+      "\024\n\014double_value\030\006 \001(\001\022\023\n\013float_value\030\007 \001" +
+      "(\002\022\022\n\nbool_value\030\010 \001(\010\"I\n\004Type\022\n\n\006STRING" +
+      "\020\001\022\t\n\005INT32\020\002\022\t\n\005INT64\020\003\022\n\n\006DOUBLE\020\004\022\t\n\005" +
+      "FLOAT\020\005\022\010\n\004BOOL\020\006B@\n\'com.tinkerpop.bluep",
+      "rints.impls.ramcloudB\025ElementPropertyPro" +
+      "tos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1477,7 +1538,7 @@ public final class ElementPropertyProtos {
           internal_static_RamCloudGraph_Property_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_RamCloudGraph_Property_descriptor,
-              new java.lang.String[] { "Key", "ValueType", "StringValue", "Int64Value", "DoubleValue", "FloatValue", "BoolValue", },
+              new java.lang.String[] { "Key", "ValueType", "StringValue", "Int32Value", "Int64Value", "DoubleValue", "FloatValue", "BoolValue", },
               com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.class,
               com.tinkerpop.blueprints.impls.ramcloud.ElementPropertyProtos.Property.Builder.class);
           return null;
