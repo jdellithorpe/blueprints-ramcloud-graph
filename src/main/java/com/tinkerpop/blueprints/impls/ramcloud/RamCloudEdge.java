@@ -1,11 +1,9 @@
 package com.tinkerpop.blueprints.impls.ramcloud;
 
-import java.util.Arrays;
-import java.util.Set;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
-import java.util.logging.Handler;
-import java.util.logging.ConsoleHandler;
+import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,38 +13,140 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.ExceptionFactory;
 
-public class RamCloudEdge implements Edge {
+import edu.stanford.ramcloud.JRamCloud;
 
+public class RamCloudEdge extends RamCloudElement implements Edge {
+
+  private static final Logger logger = Logger.getLogger(RamCloudGraph.class.getName());
+  
   private RamCloudVertex outVertex;
   private RamCloudVertex inVertex;
   private String label;
-  private RamCloudGraph graph;
   private byte[] rcKey;
-  
-  private static Logger LOGGER = Logger.getLogger(RamCloudGraph.class.getName());
+  private RamCloudGraph graph;
   
   public RamCloudEdge(RamCloudVertex outVertex, RamCloudVertex inVertex, String label, RamCloudGraph graph) {
-    this.graph = graph;
+    super(edgeToRcKey(outVertex, inVertex, label), graph.edgePropTableId, graph.rcClient);
     
     this.outVertex = outVertex;
     this.inVertex = inVertex;
     this.label = label;
-    
-    this.rcKey = ByteBuffer.allocate(16 + label.length()).put(outVertex.getRcKey()).put(inVertex.getRcKey()).put(label.getBytes()).array();
+    this.rcKey = edgeToRcKey(outVertex, inVertex, label);
+    this.graph = graph;
   }
   
   public RamCloudEdge(byte[] rcKey, RamCloudGraph graph) {
-    this.graph = graph;
+    super(rcKey, graph.edgePropTableId, graph.rcClient);
     
-    ByteBuffer edgeId = ByteBuffer.wrap(rcKey);
+    ByteBuffer edgeId = ByteBuffer.wrap(rcKey).order(ByteOrder.LITTLE_ENDIAN);
     outVertex = new RamCloudVertex(edgeId.getLong(), graph);
     inVertex = new RamCloudVertex(edgeId.getLong(), graph);
     label = new String(rcKey, 16, rcKey.length - 16);
     
     this.rcKey = rcKey;
+    this.graph = graph;
   }
   
-  public static boolean validateEdgeId(byte[] id) {
+  private static byte[] edgeToRcKey(RamCloudVertex outVertex, RamCloudVertex inVertex, String label) {
+    return ByteBuffer.allocate(16 + label.length()).order(ByteOrder.LITTLE_ENDIAN)
+                      .putLong((Long) outVertex.getId())
+                      .putLong((Long) inVertex.getId())
+                      .put(label.getBytes())
+                      .array();
+  }
+  
+  @Override
+  public Vertex getVertex(Direction direction) throws IllegalArgumentException {
+    if(direction.equals(Direction.OUT))
+      return outVertex;
+    else if(direction.equals(Direction.IN))
+      return inVertex;
+    else
+      throw ExceptionFactory.bothIsNotSupported();
+  }
+
+  @Override
+  public String getLabel() {
+    return label;
+  }
+
+  public boolean isLoop() {
+    return outVertex.equals(inVertex);
+  }
+
+  public Vertex getNeighbor(Vertex vertex) {
+    if(outVertex.equals(vertex))
+      return inVertex;
+    else if(inVertex.equals(vertex))
+      return outVertex;
+    else
+      return null;
+  }
+  
+  @Override
+  public void remove() {
+    if(isLoop()) {
+      outVertex.removeEdgeLocally(this);
+    } else {
+      outVertex.removeEdgeLocally(this);
+      inVertex.removeEdgeLocally(this);
+    }
+    
+    super.remove();
+  }
+  
+  public void removeProperties() {
+    super.remove();
+  }
+
+  @Override
+  public Object getId() {
+    return (Object)new String(Base64.encode(rcKey));
+  }
+  
+  public boolean exists() {
+    boolean edgePropTableEntryExists;
+    boolean outVertexEntryExists;
+    boolean inVertexEntryExists;
+    
+    try {
+      graph.rcClient.read(graph.edgePropTableId, rcKey);
+      edgePropTableEntryExists = true;
+    } catch(Exception e) {
+      // Edge property table entry does not exist
+      edgePropTableEntryExists = false;
+    }
+    
+    outVertexEntryExists = outVertex.getEdgeSet().contains(this);
+    
+    if(!outVertex.equals(inVertex))
+      inVertexEntryExists = inVertex.getEdgeSet().contains(this);
+    else
+      inVertexEntryExists = outVertexEntryExists;
+    
+    if(edgePropTableEntryExists && outVertexEntryExists && inVertexEntryExists) {
+      return true;
+    } else if(!edgePropTableEntryExists && !outVertexEntryExists && !inVertexEntryExists) {
+      return false;
+    } else {
+      logger.log(Level.WARNING, toString() + ": Detected RamCloudGraph inconsistency: inVertexEntryExists=" + inVertexEntryExists + ", outVertexEntryExists=" + outVertexEntryExists + ", inVertexEntryExists=" + inVertexEntryExists + ".");
+      return true;
+    }
+  }
+  
+  public void create() throws IllegalArgumentException {
+    // TODO: Existence check costs extra (presently 3 reads), could use option to turn on/off
+    if(!exists()) {
+      outVertex.addEdgeLocally(this);
+      if(!isLoop())
+        inVertex.addEdgeLocally(this);
+      
+      graph.rcClient.write(graph.edgePropTableId, rcKey, ByteBuffer.allocate(0).array());
+    } else
+      throw ExceptionFactory.edgeWithIdAlreadyExist(rcKey);
+  }
+  
+  public static boolean isValidEdgeId(byte[] id) {
     if(id == null)
       return false;
     if(id.length == 0)
@@ -94,70 +194,8 @@ public class RamCloudEdge implements Edge {
   }
 
   @Override
-  public <T> T getProperty(String key) {
-    //return graph.getProperty(this, key);
-    //return graph.getProtoBufProperty(this, key);
-    return graph.getHashMapProperty(this, key);
-  }
-
-  @Override
-  public Set<String> getPropertyKeys() {
-    //return graph.getPropertyKeys(this);
-    //return graph.getProtoBufPropertyKeys(this);
-    return graph.getHashMapPropertyKeys(this);
-  }
-
-  @Override
-  public void setProperty(String key, Object value) {
-    //graph.setProperty(this, key, value);
-    //graph.setProtoBufProperty(this, key, value);
-    graph.setHashMapProperty(this, key, value);
-  }
-
-  @Override
-  public <T> T removeProperty(String key) {
-    //return graph.removeProperty(this, key);
-    //return graph.removeProtoBufProperty(this, key);
-    return graph.removeHashMapProperty(this, key);
-  }
-
-  @Override
-  public void remove() {
-    graph.removeEdge(this);
-  }
-
-  @Override
-  public Object getId() {
-    LOGGER.log(Level.FINE, "Getting id of edge " + outVertex.getId() + "->" + inVertex.getId() + ":" + label);
-    
-    return (Object)new String(Base64.encode(rcKey));
-  }
-  
-  public byte[] getRcKey() {
-    LOGGER.log(Level.FINE, "Getting rcKey of edge " + outVertex.getId() + "->" + inVertex.getId() + ":" + label);
-    return rcKey;
-  }
-
   public String toString() {
-    return new String(outVertex.getId() + "->" + inVertex.getId() + ":" + label);
+    return "RamCloudEdge [outVertex=" + outVertex + ", inVertex=" + inVertex
+        + ", label=" + label + "]";
   }
-  
-  @Override
-  public Vertex getVertex(Direction direction) throws IllegalArgumentException {
-    LOGGER.log(Level.FINE, "Getting " + direction.toString() + " vertex of edge " + outVertex.getId() + "->" + inVertex.getId() + ":" + label);
-    
-    if(direction.equals(Direction.OUT))
-      return outVertex;
-    else if(direction.equals(Direction.IN))
-      return inVertex;
-    else
-      throw ExceptionFactory.bothIsNotSupported();
-  }
-
-  @Override
-  public String getLabel() {
-    LOGGER.log(Level.FINE, "Getting label of edge: " + label);
-    return label;
-  }
-
 }
