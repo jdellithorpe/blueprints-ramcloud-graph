@@ -5,17 +5,17 @@ A TinkerPop Blueprints implementation on top of RAMCloud
 
 Setup
 =====
-1. Copy src/main/java/edu/stanford/ramcloud/JRamCloud.java and
+ - Copy src/main/java/edu/stanford/ramcloud/JRamCloud.java and
 src/main/cpp/edu_stanford_ramcloud_JRamCloud.cc to your
 ramcloud/bindinds/java/edu/stanford/ramcloud directory, overwriting what is
 already there.
 
-2. Generate the C++ header files containing the function signatures for all the
+ - Generate the C++ header files containing the function signatures for all the
 native methods in the Java RamCloud library:
 
 javah -cp ../../../ edu.stanford.ramcloud.JRamCloud
 
-3. Compile the ramcloud C++ library (assuming ramcloud is in your ${HOME}
+ - Compile the ramcloud C++ library (assuming ramcloud is in your ${HOME}
 directory and you have already compiled ramcloud):
 
 c++ -Wall -O3 -shared -fPIC -std=c++0x \
@@ -26,13 +26,13 @@ c++ -Wall -O3 -shared -fPIC -std=c++0x \
   -L${HOME}/ramcloud/obj.master -o libedu_stanford_ramcloud_JRamCloud.so \
   edu_stanford_ramcloud_JRamCloud.cc -lramcloud
 
-4. Update LD_LIBRARY_PATH (assuming ramcloud is in your ${HOME} directory) to
+ - Update LD_LIBRARY_PATH (assuming ramcloud is in your ${HOME} directory) to
 include the library and also any other ramcloud libraries:
 
 export
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOME}/ramcloud/bindings/java/edu/stanford/ramcloud:${HOME}/ramcloud/obj.master
 
-5. Startup a ramcloud cluster somewhere and modify RamCloudGraph.java to point
+ - Startup a ramcloud cluster somewhere and modify RamCloudGraph.java to point
 to the coordinator.
 
-6. Compile this package (blueprints-ramcloud-graph) using maven and run :)
+ - Compile this package (blueprints-ramcloud-graph) using maven and run :)
