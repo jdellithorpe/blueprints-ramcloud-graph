@@ -36,3 +36,46 @@ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOME}/ramcloud/bindings/java/edu/stanford/ram
 to the coordinator.
 
  - Compile this package (blueprints-ramcloud-graph) using maven and run :)
+
+Using Rexster
+=============
+ - git clone the rexster repository:
+
+git clone https://github.com/tinkerpop/rexster.git
+
+ - Compile rexster
+
+mvn compile
+
+ - Compile packaged rexster server
+
+cd rexster-server/
+mvn package
+
+ - Copy blueprints-ramcloud-graph jar file into the compiled rexster-server
+   library directory (use mvn package to build this jar file):
+
+cp blueprints-ramcloud-graph-2.0.0.jar
+~/git/rexster/rexster-server/target/rexster-server-2.5.0-SNAPSHOT-standalone/lib
+
+ - Edit rexster-server config file
+
+vim config/rexster.xml
+
+ - Change web-root to be your public web-root directory
+
+ - Add a ramcloud graph to the set of graphs to load up:
+
+        <graph>
+            <graph-enabled>true</graph-enabled>
+            <graph-name>ramcloudgraph</graph-name>
+            <graph-type>com.tinkerpop.rexster.config.RamCloudGraphConfiguration</graph-type>
+        </graph>
+
+ - Startup a ramcloud cluster
+
+ - Startup the rexster server:
+
+./bin/rexster.sh -start &
+
+ - Done!
