@@ -22,25 +22,27 @@ public class RamCloudGraphTest extends GraphTest {
   public RamCloudGraphTest() {
     
   }
-
+  /*
   public void testVertexTestSuite() throws Exception {
     this.stopWatch();
     doTestSuite(new VertexTestSuite(this));
     printTestPerformance("VertexTestSuite", this.stopWatch());
   }
-  
+  */
+  /*
   public void testEdgeTestSuite() throws Exception {
     this.stopWatch();
     doTestSuite(new EdgeTestSuite(this));
     printTestPerformance("EdgeTestSuite", this.stopWatch());
   }
-  
+  */
+  /*
   public void testGraphTestSuite() throws Exception {
     this.stopWatch();
     doTestSuite(new GraphTestSuite(this));
     printTestPerformance("GraphTestSuite", this.stopWatch());
   }
-  
+  */
   /*
   public void testKeyIndexableGraphTestSuite() throws Exception {
     this.stopWatch();
@@ -48,13 +50,11 @@ public class RamCloudGraphTest extends GraphTest {
     printTestPerformance("KeyIndexableGraphTestSuite", this.stopWatch());
   }
   
-  
   public void testIndexableGraphTestSuite() throws Exception {
     this.stopWatch();
     doTestSuite(new IndexableGraphTestSuite(this));
     printTestPerformance("IndexableGraphTestSuite", this.stopWatch());
   }
-  
   
   public void testIndexTestSuite() throws Exception {
     this.stopWatch();
@@ -62,7 +62,7 @@ public class RamCloudGraphTest extends GraphTest {
     printTestPerformance("IndexTestSuite", this.stopWatch());
   }
   */
-  
+  /*
   public void testGraphMLReaderTestSuite() throws Exception {
     this.stopWatch();
     doTestSuite(new GraphMLReaderTestSuite(this));
@@ -74,13 +74,14 @@ public class RamCloudGraphTest extends GraphTest {
     doTestSuite(new GMLReaderTestSuite(this));
     printTestPerformance("GMLReaderTestSuite", this.stopWatch());
   }
-  
+  */
+  ///*
   public void testGraphSONReaderTestSuite() throws Exception {
     this.stopWatch();
     doTestSuite(new GraphSONReaderTestSuite(this));
     printTestPerformance("GraphSONReaderTestSuite", this.stopWatch());
   }
-  
+  //*/
   @Override
   public void doTestSuite(TestSuite testSuite) throws Exception {
     for (Method method : testSuite.getClass().getDeclaredMethods()) {
@@ -93,12 +94,12 @@ public class RamCloudGraphTest extends GraphTest {
 
   @Override
   public Graph generateGraph() {
-    return new RamCloudGraph("infrc:host=192.168.1.101,port=12246", Level.INFO);
+    return generateGraph("");
   }
 
   @Override
   public Graph generateGraph(String graphDirectoryName) {
-    return new RamCloudGraph("infrc:host=192.168.1.101,port=12246");
+    return new RamCloudGraph("infrc:host=192.168.1.101,port=12246", Level.FINE);
   }
 
 }
