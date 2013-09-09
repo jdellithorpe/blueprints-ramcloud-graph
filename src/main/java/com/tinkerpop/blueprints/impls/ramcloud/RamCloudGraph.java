@@ -93,7 +93,11 @@ public class RamCloudGraph implements IndexableGraph, KeyIndexableGraph, Transac
   public RamCloudGraph(String coordinatorLocation) {
     this(coordinatorLocation, Level.INFO);
   }
-  
+ 
+  public RamCloudGraph(Level logLevel) {
+    this("infrc:host=192.168.1.101,port=12246", logLevel);
+  }
+ 
   public RamCloudGraph(String coordinatorLocation, Level logLevel) {
     logger.setLevel(logLevel);
     Handler consoleHandler = new ConsoleHandler();
@@ -117,6 +121,8 @@ public class RamCloudGraph implements IndexableGraph, KeyIndexableGraph, Transac
 
   @Override
   public Vertex addVertex(Object id) {
+    logger.log(Level.FINE, "Adding vertex: [id=" + id + "]");
+
     Long longId;
     
     if(id == null) {
@@ -194,6 +200,8 @@ public class RamCloudGraph implements IndexableGraph, KeyIndexableGraph, Transac
 
   @Override
   public void removeVertex(Vertex vertex) {
+    logger.log(Level.FINE, "Removing vertex: [vertex=" + vertex + "]");
+    
     ((RamCloudVertex) vertex).remove();
   }
 
@@ -228,6 +236,8 @@ public class RamCloudGraph implements IndexableGraph, KeyIndexableGraph, Transac
 
   @Override
   public Edge addEdge(Object id, Vertex outVertex, Vertex inVertex, String label) throws IllegalArgumentException {
+    logger.log(Level.FINE, "Adding edge: [id=" + id + ", outVertex=" + outVertex + ", inVertex=" + inVertex + ", label=" + label + "]");
+    
     if(label == null) {
       throw ExceptionFactory.edgeLabelCanNotBeNull();
     }
@@ -273,6 +283,8 @@ public class RamCloudGraph implements IndexableGraph, KeyIndexableGraph, Transac
 
   @Override
   public void removeEdge(Edge edge) {
+    logger.log(Level.FINE, "Removing edge: [edge=" + edge + "]");
+    
     edge.remove();
   }
 
@@ -394,7 +406,28 @@ public class RamCloudGraph implements IndexableGraph, KeyIndexableGraph, Transac
   }
 
   public static void main(String[] args) {
-    RamCloudGraph graph = new RamCloudGraph();
+    RamCloudGraph graph = new RamCloudGraph(Level.FINER);
+    
+    Vertex a = graph.addVertex(null);
+    Vertex b = graph.addVertex(null);
+    Vertex c = graph.addVertex(null);
+    Vertex d = graph.addVertex(null);
+    Vertex e = graph.addVertex(null);
+    Vertex f = graph.addVertex(null);
+    Vertex g = graph.addVertex(null);
+    
+    graph.addEdge(null, a, a, "friend");
+    graph.addEdge(null, a, b, "friend1");
+    graph.addEdge(null, a, b, "friend2");
+    graph.addEdge(null, a, b, "friend3");
+    graph.addEdge(null, a, c, "friend");
+    graph.addEdge(null, a, d, "friend");
+    graph.addEdge(null, a, e, "friend");
+    graph.addEdge(null, a, f, "friend");
+    graph.addEdge(null, a, g, "friend");
+    
+    graph.removeVertex(a);
+    
     
     graph.shutdown();
   }

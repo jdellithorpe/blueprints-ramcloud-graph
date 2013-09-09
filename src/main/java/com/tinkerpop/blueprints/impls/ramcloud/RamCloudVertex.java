@@ -172,6 +172,8 @@ public class RamCloudVertex extends RamCloudElement implements Vertex {
   }
   
   public void addEdgesLocally(List<RamCloudEdge> edgesToAdd) {
+    logger.log(Level.FINER, this + ": Adding edges: [edgesToAdd=" + edgesToAdd + "]");
+    
     Set<RamCloudEdge> edges = getEdgeSet();
     
     try {
@@ -195,6 +197,8 @@ public class RamCloudVertex extends RamCloudElement implements Vertex {
   }
    
    public void removeEdgesLocally(List<RamCloudEdge> edgesToRemove) {
+     logger.log(Level.FINER, this + ": Removing edges: [edgesToRemove=" + edgesToRemove + "]");
+     
      Set<RamCloudEdge> edges = getEdgeSet();
      
      try {
