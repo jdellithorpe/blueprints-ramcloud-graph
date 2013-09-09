@@ -402,7 +402,7 @@ public class RamCloudGraph implements IndexableGraph, KeyIndexableGraph, Transac
   
   @Override
   public String toString() {
-    return getClass().getSimpleName().toLowerCase() + " [vertices:" + count(getVertices().iterator()) + " edges:" + count(getEdges().iterator()) + "]";
+    return getClass().getSimpleName().toLowerCase() + "[vertices:" + count(getVertices().iterator()) + " edges:" + count(getEdges().iterator()) + "]";
   }
 
   public static void main(String[] args) {
