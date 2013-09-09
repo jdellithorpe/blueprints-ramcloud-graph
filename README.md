@@ -52,10 +52,14 @@ mvn compile
 cd rexster-server/
 mvn package
 
- - Copy blueprints-ramcloud-graph jar file into the compiled rexster-server
-   library directory (use mvn package to build this jar file):
+ - Compile blueprints-ramcloud-graph jar with depdencies:
+ 
+ mvn assembly:assembly -DdescriptorId=jar-with-dependencies
 
-cp blueprints-ramcloud-graph-2.0.0.jar
+ - Copy blueprints-ramcloud-graph jar file into the compiled rexster-server
+   library directory:
+
+cp blueprints-ramcloud-graph-2.0.0-jar-with-depdencies.jar
 ~/git/rexster/rexster-server/target/rexster-server-2.5.0-SNAPSHOT-standalone/lib
 
  - Edit rexster-server config file
