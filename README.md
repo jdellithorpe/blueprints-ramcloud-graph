@@ -1,7 +1,7 @@
 blueprints-ramcloud-graph
 =========================
 
-A TinkerPop Blueprints implementation on top of RAMCloud
+A TinkerPop Blueprints implementation for RAMCloud
 
 Setup
 =====
