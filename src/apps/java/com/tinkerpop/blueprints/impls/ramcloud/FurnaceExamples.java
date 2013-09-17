@@ -1,5 +1,7 @@
 package com.tinkerpop.blueprints.impls.ramcloud;
 
+import java.util.logging.Level;
+
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.furnace.generators.CommunityGenerator;
 import com.tinkerpop.furnace.generators.DistributionGenerator;
@@ -43,7 +45,7 @@ public class FurnaceExamples {
   }
   
   public static void main(String[] args) {
-    Graph graph = new RamCloudGraph();
+    Graph graph = new RamCloudGraph(Level.FINER);
     
     generateCommunityGraph(graph, "HippieCommune");
     
