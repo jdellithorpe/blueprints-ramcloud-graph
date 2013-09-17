@@ -99,3 +99,56 @@ cp blueprints-ramcloud-graph-2.0.0-jar-with-depdencies.jar ~/git/rexster/rexster
 ```
 localhost:8182
 ```
+
+
+Using Gremlin
+=============
+ - git clone the gremlin repository:
+
+```
+git clone https://github.com/tinkerpop/gremlin.git
+```
+
+ - Compile gremlin
+
+```
+cd rexster/
+mvn package
+```
+
+ - Go back to the blueprints-ramcloud-graph directory and compile jar with depdencies:
+
+```
+mvn assembly:assembly -DdescriptorId=jar-with-dependencies
+```
+
+ - Copy resulting jar file into the compiled gremlin-groovy library directory:
+
+```
+cp blueprints-ramcloud-graph-2.0.0-jar-with-depdencies.jar ~/git/gremlin/gremlin-groovy/target/gremlin-groovy-2.5.0-SNAPSHOT-standalone/lib
+```
+
+ - Startup a ramcloud cluster (maybe using the cluster.py script):
+
+```
+./cluster.py --verbose --servers=5 --replicas=3 --backups=1 --masterArgs="--totalMasterMemory 80% --masterServiceThreads 4" --clients=1 --client=../obj.master/client --debug
+```
+
+ - Startup gremlin shell:
+
+```
+./bin/gremlin.sh
+```
+
+ - Import RamCloudGraph java libraries and create RamCloudGraph:
+
+```
+         \,,,/
+         (o o)
+-----oOOo-(_)-oOOo-----
+gremlin> import com.tinkerpop.blueprints.impls.ramcloud.*
+...
+gremlin> g = new RamCloudGraph()
+```
+
+ - Have fun!
