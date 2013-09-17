@@ -45,12 +45,28 @@ git clone https://github.com/tinkerpop/rexster.git
 
  - Compile rexster
 
+cd rexster/
 mvn compile
 
  - Compile packaged rexster server
 
 cd rexster-server/
 mvn package
+
+ - Edit rexster-server config file
+
+cd target/rexster-server-2.5.0-SNAPSHOT-standalone/
+vim config/rexster.xml
+
+   - Change web-root to be your public web-root directory
+
+   - Add a ramcloud graph to the set of graphs to load up:
+
+        <graph>
+            <graph-enabled>true</graph-enabled>
+            <graph-name>ramcloudgraph</graph-name>
+            <graph-type>com.tinkerpop.rexster.config.RamCloudGraphConfiguration</graph-type>
+        </graph>
 
  - Compile blueprints-ramcloud-graph jar with depdencies:
  
@@ -62,24 +78,14 @@ mvn package
 cp blueprints-ramcloud-graph-2.0.0-jar-with-depdencies.jar
 ~/git/rexster/rexster-server/target/rexster-server-2.5.0-SNAPSHOT-standalone/lib
 
- - Edit rexster-server config file
-
-vim config/rexster.xml
-
- - Change web-root to be your public web-root directory
-
- - Add a ramcloud graph to the set of graphs to load up:
-
-        <graph>
-            <graph-enabled>true</graph-enabled>
-            <graph-name>ramcloudgraph</graph-name>
-            <graph-type>com.tinkerpop.rexster.config.RamCloudGraphConfiguration</graph-type>
-        </graph>
-
- - Startup a ramcloud cluster
+ - Startup a ramcloud cluster (maybe using the cluster.py script):
+ 
+ ./cluster.py --verbose --servers=5 --replicas=3 --backups=1 --masterArgs="--totalMasterMemory 80% --masterServiceThreads 4" --clients=1 --client=../obj.master/client --debug
 
  - Startup the rexster server:
 
 ./bin/rexster.sh -start &
 
- - Done!
+ - Connect to rexster server at:
+ 
+ localhost:8182
