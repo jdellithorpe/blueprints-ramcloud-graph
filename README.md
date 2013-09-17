@@ -146,9 +146,7 @@ cp blueprints-ramcloud-graph-2.0.0-jar-with-depdencies.jar ~/git/gremlin/gremlin
          \,,,/
          (o o)
 -----oOOo-(_)-oOOo-----
-gremlin> import com.tinkerpop.blueprints.impls.ramcloud.*
-...
-gremlin> g = new RamCloudGraph()
+gremlin> g = new com.tinkerpop.blueprints.impls.ramcloud.RamCloudGraph()
 ```
 
  - Have fun!
