@@ -32,14 +32,14 @@ public class FurnaceExamples {
     DistributionGenerator dg = new DistributionGenerator(label);
     int numEdges;
     
-    for(int i = 0; i<25; i++) {
+    for(int i = 0; i<10; i++) {
       graph.addVertex(null);
     }
     
     dg.setAllowLoops(true);
     dg.setInDistribution(new NormalDistribution(2.0));
     dg.setOutDistribution(new NormalDistribution(2.0));
-    numEdges = dg.generate(graph, 50);
+    numEdges = dg.generate(graph, 20);
     
     return numEdges;
   }
@@ -47,7 +47,7 @@ public class FurnaceExamples {
   public static void main(String[] args) {
     Graph graph = new RamCloudGraph(Level.FINER);
     
-    generateCommunityGraph(graph, "HippieCommune");
+    //generateCommunityGraph(graph, "HippieCommune");
     
     //generateDistributionGraph(graph, "HippieRefuge");
     
