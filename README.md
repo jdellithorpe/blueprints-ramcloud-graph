@@ -150,3 +150,11 @@ gremlin> g = new com.tinkerpop.blueprints.impls.ramcloud.RamCloudGraph()
 ```
 
  - Have fun!
+
+Using Furnace
+=============
+ - See `com.tinkerpop.blueprints.impls.ramcloud.FurnaceExamples` for some examples of using Furnace
+
+Using JUNG
+
+ - See `com.tinkerpop.blueprints.impls.ramcloud.JUNGExamples` for some examples of using the JUNG ouplementation (mostly taken from https://github.com/tinkerpop/blueprints/wiki/JUNG-Ouplementation).
